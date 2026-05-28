@@ -2,492 +2,605 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="BJJ Journal">
-<meta name="theme-color" content="#0a0a0a">
-<title>BJJ Personal Journal</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="My BJJ Journal">
+<meta name="theme-color" content="#ffffff">
+<title>My BJJ Journal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold: #C8A96E; --gold-dim: #8a7148; --gold-light: #f0e0b8;
-    --bg: #080808; --bg1: #0f0f0f; --bg2: #161616; --bg3: #1e1e1e;
-    --border: #2a2a2a; --text: #e8dece; --text-dim: #888; --text-faint: #444;
-    --green: #4a7c59; --red: #7c3a3a; --blue: #3a5a7c;
-    --mono: 'DM Mono', monospace; --serif: 'Playfair Display', serif;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; overflow: hidden; }
-  body { background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 13px; line-height: 1.6; }
-  #app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+:root {
+  --gold: #B8962E; --gold-dim: #8a7030; --gold-light: #f5ecd0;
+  --bg: #ffffff; --bg1: #fafafa; --bg2: #f3f3f3; --bg3: #e8e8e8;
+  --border: #d8d8d8; --border-dark: #bbb;
+  --text: #111111; --text-dim: #666; --text-faint: #aaa;
+  --green: #2e7d52; --red: #c0392b; --blue: #2c5f8a;
+  --gold-text: #B8962E;
+  --mono: 'DM Mono', monospace; --serif: 'Playfair Display', serif;
+  --shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; }
+body { background:var(--bg); color:var(--text); font-family:var(--mono); font-size:13px; line-height:1.6; }
 
-  /* TOP BAR */
-  #topbar { flex-shrink:0; background:var(--bg1); border-bottom:1px solid var(--border); padding:12px 16px 10px; display:flex; align-items:center; justify-content:space-between; }
-  .topbar-title { display:flex; flex-direction:column; }
-  .topbar-sup { font-size:9px; letter-spacing:3px; color:var(--gold); text-transform:uppercase; }
-  .topbar-main { font-family:var(--serif); font-size:20px; color:var(--text); line-height:1.1; }
-  .topbar-actions { display:flex; gap:8px; }
-  .icon-btn { background:none; border:1px solid var(--border); color:var(--gold); width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; border-radius:4px; }
+/* ── LAYOUT ── */
+#app { display:flex; flex-direction:column; height:100vh; height:100dvh; max-width:1100px; margin:0 auto; }
+@media(min-width:768px){
+  #app { flex-direction:row; height:100vh; border-left:1px solid var(--border); border-right:1px solid var(--border); }
+  #sidebar { width:220px; flex-shrink:0; background:var(--bg1); border-right:1px solid var(--border); display:flex; flex-direction:column; padding:0; }
+  #bottomnav { display:none !important; }
+  #topbar { border-bottom:1px solid var(--border); padding:20px 24px 16px; }
+  .page { padding:24px; }
+  #sidebar-nav { padding:16px 0; }
+  .snav-btn { display:flex; align-items:center; gap:10px; width:100%; padding:10px 20px; background:none; border:none; color:var(--text-dim); font-family:var(--mono); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all .15s; text-align:left; border-left:3px solid transparent; }
+  .snav-btn.active { color:var(--gold); border-left-color:var(--gold); background:var(--gold-light); }
+  .snav-btn:hover:not(.active) { background:var(--bg2); }
+  .snav-btn svg { width:16px; height:16px; flex-shrink:0; }
+  #main-area { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  #sidebar-bottom { margin-top:auto; padding:16px; border-top:1px solid var(--border); }
+}
+@media(max-width:767px){
+  #sidebar { display:none; }
+  #main-area { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+}
 
-  /* BOTTOM NAV */
-  #bottomnav { flex-shrink:0; background:var(--bg1); border-top:1px solid var(--border); display:flex; }
-  .nav-btn { flex:1; background:none; border:none; color:var(--text-dim); padding:10px 4px 8px; cursor:pointer; font-family:var(--mono); display:flex; flex-direction:column; align-items:center; gap:3px; font-size:9px; letter-spacing:1px; text-transform:uppercase; transition:color .2s; }
-  .nav-btn.active { color:var(--gold); }
-  .nav-btn svg { width:20px; height:20px; }
+/* ── TOP BAR ── */
+#topbar { flex-shrink:0; background:var(--bg1); border-bottom:1px solid var(--border); padding:12px 16px 10px; display:flex; align-items:center; justify-content:space-between; }
+.topbar-title { display:flex; flex-direction:column; }
+.topbar-sup { font-size:9px; letter-spacing:3px; color:var(--gold); text-transform:uppercase; }
+.topbar-main { font-family:var(--serif); font-size:20px; color:var(--text); line-height:1.1; }
+.topbar-actions { display:flex; gap:8px; }
+.icon-btn { background:none; border:1px solid var(--border); color:var(--gold); width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; border-radius:4px; transition:all .15s; }
+.icon-btn:hover { background:var(--gold-light); }
 
-  /* PAGES */
-  #pages { flex:1; overflow:hidden; position:relative; }
-  .page { position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch; display:none; padding:16px; }
-  .page.active { display:block; }
+/* ── BOTTOM NAV (mobile) ── */
+#bottomnav { flex-shrink:0; background:var(--bg1); border-top:1px solid var(--border); display:flex; }
+.nav-btn { flex:1; background:none; border:none; color:var(--text-dim); padding:10px 4px 8px; cursor:pointer; font-family:var(--mono); display:flex; flex-direction:column; align-items:center; gap:3px; font-size:9px; letter-spacing:1px; text-transform:uppercase; transition:color .2s; }
+.nav-btn.active { color:var(--gold); }
+.nav-btn svg { width:20px; height:20px; }
 
-  /* CARDS */
-  .card { background:var(--bg1); border:1px solid var(--border); border-radius:2px; margin-bottom:10px; padding:14px; cursor:pointer; transition:border-color .2s; }
-  .card:active { border-color:var(--gold); }
-  .card.training-card:active { border-color:var(--blue); }
-  .card-title { font-size:14px; color:var(--text); margin-bottom:4px; }
-  .card-meta { font-size:11px; color:var(--text-dim); }
-  .card-badges { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
-  .badge { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; padding:2px 7px; border:1px solid; border-radius:1px; }
-  .badge-gold { color:var(--gold); border-color:var(--gold-dim); }
-  .badge-green { color:var(--green); border-color:var(--green); }
-  .badge-blue { color:#7aaacc; border-color:var(--blue); }
-  .badge-dim { color:var(--text-faint); border-color:var(--text-faint); }
+/* ── PAGES ── */
+#pages { flex:1; overflow:hidden; position:relative; }
+.page { position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch; display:none; padding:16px; }
+.page.active { display:block; }
 
-  /* FORM */
-  .section-label { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin:20px 0 10px; display:flex; align-items:center; gap:10px; }
-  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
-  .section-label.blue { color:#7aaacc; }
-  .field { margin-bottom:14px; }
-  .field-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:5px; display:block; }
-  input[type=text], input[type=date], input[type=time], select, textarea { width:100%; background:var(--bg2); border:1px solid var(--border); color:var(--text); font-family:var(--mono); font-size:13px; padding:10px 12px; outline:none; border-radius:2px; -webkit-appearance:none; appearance:none; }
-  select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }
-  textarea { resize:vertical; min-height:70px; }
-  input:focus, select:focus, textarea:focus { border-color:var(--gold-dim); }
-  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+/* ── CARDS ── */
+.card { background:var(--bg1); border:1px solid var(--border); border-radius:4px; margin-bottom:10px; padding:14px; cursor:pointer; transition:all .2s; box-shadow:var(--shadow); }
+.card:hover { border-color:var(--gold-dim); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+.card.training-card:hover { border-color:var(--blue); }
+.card-title { font-size:14px; color:var(--text); margin-bottom:4px; font-weight:500; }
+.card-meta { font-size:11px; color:var(--text-dim); }
+.card-badges { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+.badge { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; padding:2px 7px; border:1px solid; border-radius:2px; }
+.badge-gold { color:var(--gold); border-color:var(--gold-dim); background:var(--gold-light); }
+.badge-green { color:var(--green); border-color:var(--green); background:#edf7f1; }
+.badge-blue { color:var(--blue); border-color:var(--blue); background:#eaf0f7; }
+.badge-dim { color:var(--text-dim); border-color:var(--border-dark); background:var(--bg2); }
 
-  .detail-row { display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; }
-  .detail-num { width:26px; height:26px; border-radius:50%; border:1px solid var(--gold-dim); color:var(--gold); font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+/* ── FORM ── */
+.section-label { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold-text); margin:22px 0 12px; display:flex; align-items:center; gap:10px; font-weight:500; }
+.section-label::after { content:''; flex:1; height:1px; background:var(--gold-light); }
+.section-label.blue { color:var(--blue); }
+.section-label.blue::after { background:#dae8f5; }
+.field { margin-bottom:14px; }
+.field-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:5px; display:block; }
+input[type=text],input[type=date],input[type=url],select,textarea {
+  width:100%; background:#fff; border:1px solid var(--border); color:#111;
+  font-family:var(--mono); font-size:13px; padding:10px 12px; outline:none; border-radius:3px;
+  -webkit-appearance:none; appearance:none; transition:border-color .15s;
+}
+select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; background-color:#fff; }
+textarea { resize:vertical; min-height:70px; }
+input:focus,select:focus,textarea:focus { border-color:var(--gold); box-shadow:0 0 0 2px rgba(184,150,46,0.1); }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+.detail-row { display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; }
+.detail-num { width:26px; height:26px; border-radius:50%; border:1px solid var(--gold-dim); color:var(--gold); font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; background:var(--gold-light); }
 
-  /* stars */
-  .stars { display:flex; gap:6px; margin-top:6px; }
-  .star { font-size:22px; cursor:pointer; opacity:.25; transition:opacity .15s; }
-  .star.on { opacity:1; }
+/* stars */
+.stars { display:flex; gap:6px; margin-top:6px; }
+.star,.t-star { font-size:22px; cursor:pointer; opacity:.2; transition:opacity .15s; }
+.star.on,.t-star.on { opacity:1; }
 
-  /* checks */
-  .check-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--bg3); }
-  .check-box { width:22px; height:22px; border:1px solid var(--border); border-radius:2px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; transition:all .15s; }
-  .check-box.checked { background:var(--green); border-color:var(--green); }
+/* checks */
+.check-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--bg3); cursor:pointer; }
+.check-box { width:22px; height:22px; border:1px solid var(--border-dark); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; transition:all .15s; background:#fff; }
+.check-box.checked { background:var(--green); border-color:var(--green); color:#fff; }
 
-  /* rewatch */
-  .rewatch-btns { display:flex; gap:6px; }
-  .rw-btn { padding:7px 14px; border:1px solid var(--border); background:none; color:var(--text-dim); cursor:pointer; font-family:var(--mono); font-size:12px; border-radius:2px; transition:all .15s; }
-  .rw-btn.active { background:var(--gold); color:var(--bg); border-color:var(--gold); }
+/* rewatch / intensity */
+.rewatch-btns,.intensity-btns { display:flex; gap:6px; flex-wrap:wrap; }
+.rw-btn,.int-btn { padding:7px 14px; border:1px solid var(--border); background:#fff; color:var(--text-dim); cursor:pointer; font-family:var(--mono); font-size:12px; border-radius:3px; transition:all .15s; }
+.rw-btn.active { background:var(--gold); color:#fff; border-color:var(--gold); }
+.int-btn.active { background:var(--blue); color:#fff; border-color:var(--blue); }
 
-  /* intensity */
-  .intensity-btns { display:flex; gap:6px; }
-  .int-btn { padding:7px 12px; border:1px solid var(--border); background:none; color:var(--text-dim); cursor:pointer; font-family:var(--mono); font-size:11px; border-radius:2px; transition:all .15s; }
-  .int-btn.active { background:var(--blue); color:#fff; border-color:var(--blue); }
+/* save/delete */
+.save-btn { width:100%; padding:14px; background:var(--gold); color:#fff; border:none; font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; cursor:pointer; margin-top:24px; border-radius:3px; transition:opacity .2s; font-weight:500; }
+.save-btn:hover { opacity:.9; }
+.save-btn.blue-btn { background:var(--blue); }
+.delete-btn { width:100%; padding:12px; background:none; color:var(--red); border:1px solid var(--red); font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; margin-top:12px; border-radius:3px; }
 
-  /* save/delete */
-  .save-btn { width:100%; padding:15px; background:var(--gold); color:var(--bg); border:none; font-family:var(--mono); font-size:11px; letter-spacing:3px; text-transform:uppercase; cursor:pointer; margin-top:24px; border-radius:2px; transition:opacity .2s; }
-  .save-btn:disabled { opacity:.4; }
-  .save-btn.blue-btn { background:var(--blue); color:#fff; }
-  .delete-btn { width:100%; padding:12px; background:none; color:var(--red); border:1px solid var(--red); font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; margin-top:20px; border-radius:2px; }
+/* archive */
+.empty-state { text-align:center; padding:60px 20px; color:var(--text-faint); }
+.empty-icon { font-size:40px; margin-bottom:12px; }
+.section-header { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold-dim); padding:14px 0 6px; border-bottom:1px solid var(--gold-light); margin-bottom:8px; }
+.section-header.blue { color:var(--blue); border-bottom-color:#dae8f5; }
 
-  /* archive */
-  .empty-state { text-align:center; padding:60px 20px; color:var(--text-faint); }
-  .empty-icon { font-size:40px; margin-bottom:12px; }
-  .section-header { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold-dim); padding:12px 0 6px; }
-  .section-header.blue { color:#3a5a7c; }
+/* search */
+.search-wrap { position:relative; margin-bottom:12px; }
+.search-wrap input { padding-left:34px; }
+.search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-dim); font-size:14px; pointer-events:none; }
+.chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+.chip { padding:5px 12px; border:1px solid var(--border); border-radius:20px; font-size:11px; cursor:pointer; background:#fff; color:var(--text-dim); font-family:var(--mono); transition:all .15s; }
+.chip.active { border-color:var(--gold); color:var(--gold); background:var(--gold-light); }
 
-  /* tab switcher inside archive pages */
-  .tab-row { display:flex; gap:0; margin-bottom:14px; border:1px solid var(--border); border-radius:3px; overflow:hidden; }
-  .tab-btn { flex:1; padding:9px 4px; background:none; border:none; color:var(--text-dim); font-family:var(--mono); font-size:10px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all .15s; }
-  .tab-btn.active { background:var(--gold); color:var(--bg); }
+/* detail */
+.detail-header { background:var(--bg1); padding:16px; border-bottom:1px solid var(--border); margin:-16px -16px 16px; display:flex; align-items:center; gap:12px; }
+.back-btn { background:none; border:1px solid var(--border); color:var(--gold); font-size:16px; cursor:pointer; padding:6px 10px; flex-shrink:0; border-radius:3px; }
+.detail-ttl { font-family:var(--serif); font-size:18px; line-height:1.2; color:var(--text); }
+.detail-section { margin-bottom:18px; }
+.detail-key { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:5px; }
+.detail-val { font-size:13px; color:var(--text); line-height:1.6; }
+.detail-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:10px; }
+.detail-stat { text-align:center; background:var(--bg1); border:1px solid var(--border); border-radius:4px; padding:10px 6px; }
+.detail-stat-val { font-size:18px; color:var(--gold); }
+.detail-stat-lbl { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-top:3px; }
+.video-link-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; background:var(--gold-light); border:1px solid var(--gold-dim); color:var(--gold); border-radius:3px; font-size:11px; letter-spacing:1px; text-decoration:none; margin-top:6px; }
 
-  /* detail */
-  .detail-header { background:var(--bg1); padding:16px; border-bottom:1px solid var(--border); margin:-16px -16px 16px; display:flex; align-items:center; gap:12px; }
-  .back-btn { background:none; border:none; color:var(--gold); font-size:18px; cursor:pointer; padding:4px; flex-shrink:0; }
-  .detail-ttl { font-family:var(--serif); font-size:18px; line-height:1.2; }
-  .detail-section { margin-bottom:18px; }
-  .detail-key { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:5px; }
-  .detail-val { font-size:13px; color:var(--text); line-height:1.6; }
-  .detail-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:10px; }
-  .detail-stat { text-align:center; }
-  .detail-stat-val { font-size:18px; color:var(--gold); }
-  .detail-stat-lbl { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-top:3px; }
+/* stats page */
+.stat-card { background:var(--bg1); border:1px solid var(--border); border-radius:4px; padding:16px; margin-bottom:10px; box-shadow:var(--shadow); }
+.stat-card-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+.stat-big { font-size:36px; font-family:var(--serif); color:var(--text); }
+.stat-sub { font-size:11px; color:var(--text-dim); margin-top:2px; }
+.stat-bar-wrap { margin-bottom:8px; }
+.stat-bar-label { display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); margin-bottom:3px; }
+.stat-bar { height:6px; background:var(--bg3); border-radius:3px; overflow:hidden; }
+.stat-bar-fill { height:100%; background:var(--gold); border-radius:3px; transition:width .5s; }
+.stat-bar-fill.blue { background:var(--blue); }
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
 
-  /* map */
-  #map-page { padding:0; }
-  #map-controls { position:absolute; top:10px; right:10px; z-index:10; display:flex; flex-direction:column; gap:6px; }
-  .map-ctrl-btn { width:34px; height:34px; background:var(--bg2); border:1px solid var(--border); color:var(--text); font-size:16px; cursor:pointer; border-radius:3px; display:flex; align-items:center; justify-content:center; }
-  #map-legend { position:absolute; bottom:10px; left:10px; z-index:10; background:rgba(8,8,8,.9); border:1px solid var(--border); padding:10px 12px; font-size:10px; border-radius:3px; }
-  .legend-item { display:flex; align-items:center; gap:7px; margin-bottom:4px; color:var(--text-dim); }
-  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-  #map-filter { position:absolute; top:10px; left:10px; z-index:10; display:flex; flex-direction:column; gap:4px; }
-  .map-filter-btn { padding:5px 10px; background:var(--bg2); border:1px solid var(--border); color:var(--text-dim); font-family:var(--mono); font-size:9px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; border-radius:3px; }
-  .map-filter-btn.active { border-color:var(--gold); color:var(--gold); }
-  #map-canvas { width:100%; height:100%; }
-  #map-tooltip { position:absolute; pointer-events:none; z-index:20; background:var(--bg2); border:1px solid var(--gold-dim); padding:8px 12px; border-radius:3px; font-size:11px; max-width:180px; display:none; }
-  .map-empty { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-faint); text-align:center; padding:30px; }
+/* map */
+#map-page { padding:0; }
+#map-controls { position:absolute; top:10px; right:10px; z-index:10; display:flex; flex-direction:column; gap:6px; }
+.map-ctrl-btn { width:34px; height:34px; background:#fff; border:1px solid var(--border); color:var(--text); font-size:16px; cursor:pointer; border-radius:3px; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); }
+#map-filter { position:absolute; top:10px; left:10px; z-index:10; display:flex; flex-direction:column; gap:4px; }
+.map-filter-btn { padding:5px 10px; background:#fff; border:1px solid var(--border); color:var(--text-dim); font-family:var(--mono); font-size:9px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; border-radius:3px; box-shadow:var(--shadow); }
+.map-filter-btn.active { border-color:var(--gold); color:var(--gold); background:var(--gold-light); }
+#map-legend { position:absolute; bottom:10px; left:10px; z-index:10; background:rgba(255,255,255,0.95); border:1px solid var(--border); padding:10px 12px; font-size:10px; border-radius:4px; box-shadow:var(--shadow); }
+.legend-item { display:flex; align-items:center; gap:7px; margin-bottom:4px; color:var(--text-dim); }
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+#map-canvas { width:100%; height:100%; }
+#map-tooltip { position:absolute; pointer-events:none; z-index:20; background:#fff; border:1px solid var(--gold-dim); padding:8px 12px; border-radius:4px; font-size:11px; max-width:200px; display:none; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+.map-empty { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-faint); text-align:center; padding:30px; }
 
-  /* search */
-  .search-wrap { position:relative; margin-bottom:12px; }
-  .search-wrap input { padding-left:34px; }
-  .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-dim); font-size:14px; pointer-events:none; }
-  .chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
-  .chip { padding:5px 12px; border:1px solid var(--border); border-radius:20px; font-size:11px; cursor:pointer; background:none; color:var(--text-dim); font-family:var(--mono); transition:all .15s; }
-  .chip.active { border-color:var(--gold); color:var(--gold); background:rgba(200,169,110,.08); }
+/* toast */
+#toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:var(--green); color:#fff; padding:10px 20px; font-size:11px; letter-spacing:2px; text-transform:uppercase; border-radius:3px; z-index:999; opacity:0; transition:opacity .3s; pointer-events:none; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+#toast.show { opacity:1; }
 
-  /* toast */
-  #toast { position:fixed; bottom:70px; left:50%; transform:translateX(-50%); background:var(--green); color:#fff; padding:10px 20px; font-size:11px; letter-spacing:2px; text-transform:uppercase; border-radius:2px; z-index:100; opacity:0; transition:opacity .3s; pointer-events:none; }
-  #toast.show { opacity:1; }
-
-  @media (min-width:500px) { #app { max-width:480px; margin:0 auto; box-shadow:0 0 60px rgba(0,0,0,.8); } }
+/* export modal */
+#modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:500; display:none; align-items:center; justify-content:center; padding:20px; }
+#modal-overlay.open { display:flex; }
+#modal { background:#fff; border:1px solid var(--border); border-radius:6px; padding:24px; width:100%; max-width:420px; box-shadow:0 8px 32px rgba(0,0,0,0.15); }
+.modal-title { font-family:var(--serif); font-size:20px; margin-bottom:16px; color:var(--text); }
+.modal-close { float:right; background:none; border:none; color:var(--text-dim); font-size:20px; cursor:pointer; margin-top:-4px; }
+.modal-btn { width:100%; padding:12px; margin-bottom:8px; border:1px solid var(--border); background:var(--bg1); color:var(--text); font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; border-radius:3px; transition:all .15s; }
+.modal-btn:hover { background:var(--bg2); }
+.modal-btn.primary { background:var(--gold); color:#fff; border-color:var(--gold); }
+.modal-btn.danger { color:var(--red); border-color:var(--red); }
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- TOP BAR -->
-  <div id="topbar">
-    <div class="topbar-title">
-      <span class="topbar-sup">Personal Journal</span>
-      <span class="topbar-main">BJJ Journal</span>
+  <!-- SIDEBAR (desktop) -->
+  <div id="sidebar">
+    <div id="topbar" style="border-bottom:1px solid var(--border);padding:20px 20px 16px;">
+      <div class="topbar-title">
+        <span class="topbar-sup">My</span>
+        <span class="topbar-main">BJJ Journal</span>
+      </div>
     </div>
-    <div class="topbar-actions">
-      <button class="icon-btn" onclick="openSearch()" title="Search">🔍</button>
-      <button class="icon-btn" id="add-btn" onclick="handleAdd()" title="New">＋</button>
+    <div id="sidebar-nav">
+      <button class="snav-btn active" id="snav-home" onclick="showPage('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+        Videos
+      </button>
+      <button class="snav-btn" id="snav-training" onclick="showPage('training')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        Training Log
+      </button>
+      <button class="snav-btn" id="snav-stats" onclick="showPage('stats')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        Statistics
+      </button>
+      <button class="snav-btn" id="snav-map" onclick="showPage('map')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Concept Map
+      </button>
+    </div>
+    <div id="sidebar-bottom">
+      <button class="modal-btn" onclick="openDataModal()" style="margin:0;font-size:10px;">⬆⬇ Export / Import</button>
+      <button class="modal-btn" onclick="newNote()" style="margin-top:6px;background:var(--gold);color:#fff;border-color:var(--gold);font-size:10px;">＋ New Video</button>
+      <button class="modal-btn" onclick="newTraining()" style="margin-top:6px;background:var(--blue);color:#fff;border-color:var(--blue);font-size:10px;">＋ New Training</button>
     </div>
   </div>
 
-  <!-- PAGES -->
-  <div id="pages">
-
-    <!-- VIDEO ARCHIVE -->
-    <div class="page active" id="page-home">
-      <div id="filter-chips" class="chips"></div>
-      <div id="search-bar" class="search-wrap" style="display:none">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="search-input" placeholder="Search technique, instructor..." oninput="renderArchive()">
+  <!-- MAIN AREA -->
+  <div id="main-area">
+    <!-- TOP BAR (mobile) -->
+    <div id="topbar" style="display:flex;" class="mobile-only">
+      <div class="topbar-title">
+        <span class="topbar-sup">My</span>
+        <span class="topbar-main">BJJ Journal</span>
       </div>
-      <div id="archive-list"></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" onclick="openSearch()">🔍</button>
+        <button class="icon-btn" onclick="openDataModal()">⬆⬇</button>
+        <button class="icon-btn" onclick="handleAdd()">＋</button>
+      </div>
     </div>
 
-    <!-- TRAINING LOG ARCHIVE -->
-    <div class="page" id="page-training">
-      <div id="training-filter-chips" class="chips"></div>
-      <div id="training-list"></div>
-    </div>
+    <!-- PAGES -->
+    <div id="pages">
 
-    <!-- NEW VIDEO NOTE -->
-    <div class="page" id="page-form">
-      <form id="note-form" onsubmit="saveNote(event)">
-        <div class="section-label">Video Info</div>
-        <div class="field">
-          <label class="field-label">Video Title *</label>
-          <input type="text" id="f-title" placeholder="e.g. De la Riva – Sweep System" required>
+      <!-- VIDEO ARCHIVE -->
+      <div class="page active" id="page-home">
+        <div id="filter-chips" class="chips"></div>
+        <div id="search-bar" class="search-wrap" style="display:none">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search title, instructor, series..." oninput="renderArchive()">
         </div>
-        <div class="row2">
-          <div class="field">
-            <label class="field-label">Series</label>
-            <input type="text" id="f-series" placeholder="e.g. Game Theory">
-          </div>
-          <div class="field">
-            <label class="field-label">Date</label>
-            <input type="date" id="f-date">
-          </div>
-        </div>
-        <div class="field">
-          <label class="field-label">Instructor</label>
-          <select id="f-instructor">
-            <option value="">— Select —</option>
-            <option>Rafael Mendes</option>
-            <option>Guilherme Mendes</option>
-            <option>Tainan Dalpra</option>
-            <option>Jessa Khan</option>
-            <option>Other</option>
-          </select>
-        </div>
+        <div id="archive-list"></div>
+      </div>
 
-        <div class="section-label">Technical Analysis</div>
-        <div class="row2">
-          <div class="field">
-            <label class="field-label">Position</label>
-            <select id="f-position">
-              <option value="">—</option>
-              <option>Closed Guard</option>
-              <option>De la Riva</option>
-              <option>Spider Guard</option>
-              <option>X-Guard</option>
-              <option>Half Guard</option>
-              <option>Side Control</option>
-              <option>Mount</option>
-              <option>Back Control</option>
-              <option>Turtle</option>
-              <option>Standing</option>
-              <option>Leg Locks</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="field-label">Type</label>
-            <select id="f-type">
-              <option value="">—</option>
-              <option>Sweep</option>
-              <option>Submission</option>
-              <option>Pass</option>
-              <option>Takedown</option>
-              <option>Escape</option>
-              <option>Control</option>
-              <option>Transition</option>
-              <option>Drill</option>
-            </select>
-          </div>
+      <!-- TRAINING ARCHIVE -->
+      <div class="page" id="page-training">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="training-search" placeholder="Search training logs..." oninput="renderTrainingList(currentTrainingFilter)">
         </div>
-        <div class="field">
-          <label class="field-label">Trigger — Opponent reaction that activates the technique</label>
-          <textarea id="f-trigger" placeholder="e.g. When opponent pushes the knee down..."></textarea>
-        </div>
+        <div id="training-filter-chips" class="chips"></div>
+        <div id="training-list"></div>
+      </div>
 
-        <div class="section-label">3 Key Details</div>
-        <div>
+      <!-- STATS -->
+      <div class="page" id="page-stats">
+        <div id="stats-content"></div>
+      </div>
+
+      <!-- NEW VIDEO -->
+      <div class="page" id="page-form">
+        <form id="note-form" onsubmit="saveNote(event)">
+          <div class="section-label">Video Info</div>
+          <div class="field">
+            <label class="field-label">Video Title *</label>
+            <input type="text" id="f-title" placeholder="e.g. De la Riva – Sweep System" required>
+          </div>
+          <div class="field">
+            <label class="field-label">Video URL (optional)</label>
+            <input type="url" id="f-url" placeholder="https://...">
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label class="field-label">Series</label>
+              <input type="text" id="f-series" placeholder="e.g. Game Theory">
+            </div>
+            <div class="field">
+              <label class="field-label">Date</label>
+              <input type="date" id="f-date">
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label class="field-label">Instructor</label>
+              <select id="f-instructor">
+                <option value="">— Select —</option>
+                <option>Rafael Mendes</option>
+                <option>Guilherme Mendes</option>
+                <option>Tainan Dalpra</option>
+                <option>Jessa Khan</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label">Belt Level</label>
+              <select id="f-belt">
+                <option value="">—</option>
+                <option>White</option>
+                <option>Blue</option>
+                <option>Purple</option>
+                <option>Brown</option>
+                <option>Black</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-label">Technical Analysis</div>
+          <div class="row3">
+            <div class="field">
+              <label class="field-label">Position</label>
+              <select id="f-position">
+                <option value="">—</option>
+                <option>Closed Guard</option>
+                <option>Open Guard</option>
+                <option>De la Riva</option>
+                <option>Spider Guard</option>
+                <option>X-Guard</option>
+                <option>Half Guard</option>
+                <option>Side Control</option>
+                <option>North-South</option>
+                <option>Knee on Belly</option>
+                <option>Kesa Gatame</option>
+                <option>Mount</option>
+                <option>Back Control</option>
+                <option>Turtle</option>
+                <option>Standing</option>
+                <option>Leg Locks</option>
+                <option>Framing the Guard</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label">Situation</label>
+              <select id="f-situation">
+                <option value="">—</option>
+                <option>Sweep</option>
+                <option>Submission</option>
+                <option>Pass</option>
+                <option>Takedown</option>
+                <option>Escape</option>
+                <option>Back Take</option>
+                <option>Retention</option>
+                <option>Control</option>
+                <option>Transition</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label">Technique Type</label>
+              <select id="f-techtype">
+                <option value="">—</option>
+                <option>Offensive</option>
+                <option>Defensive</option>
+                <option>Transition</option>
+                <option>Retention</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Trigger — Opponent reaction that activates the technique</label>
+            <textarea id="f-trigger" placeholder="e.g. When opponent pushes the knee down..."></textarea>
+          </div>
+
+          <div class="section-label">3 Key Details</div>
           <div class="detail-row"><div class="detail-num">1</div><input type="text" id="f-d1" placeholder="Key detail 1..."></div>
           <div class="detail-row" style="margin-top:8px"><div class="detail-num">2</div><input type="text" id="f-d2" placeholder="Key detail 2..."></div>
           <div class="detail-row" style="margin-top:8px"><div class="detail-num">3</div><input type="text" id="f-d3" placeholder="Key detail 3..."></div>
-        </div>
 
-        <div class="section-label">Connections</div>
-        <div class="field">
-          <label class="field-label">Links to (other technique / position)</label>
-          <input type="text" id="f-connections" placeholder="e.g. X-Guard, Berimbolo, Armbar">
-        </div>
+          <div class="section-label">Connections</div>
+          <div class="field">
+            <label class="field-label">Links to (other technique / position)</label>
+            <input type="text" id="f-connections" placeholder="e.g. X-Guard, Berimbolo, Armbar">
+          </div>
+          <div class="field">
+            <label class="field-label">Tags (comma separated)</label>
+            <input type="text" id="f-tags" placeholder="e.g. gi, competition, favourite">
+          </div>
 
-        <div class="section-label">Progress</div>
-        <div class="field">
-          <label class="field-label">Times watched</label>
-          <div class="rewatch-btns">
-            <button type="button" class="rw-btn" data-rw="1" onclick="setRewatch(1)">1×</button>
-            <button type="button" class="rw-btn" data-rw="2" onclick="setRewatch(2)">2×</button>
-            <button type="button" class="rw-btn" data-rw="3" onclick="setRewatch(3)">3×</button>
+          <div class="section-label">Progress</div>
+          <div class="field">
+            <label class="field-label">Times watched</label>
+            <div class="rewatch-btns">
+              <button type="button" class="rw-btn" data-rw="1" onclick="setRewatch(1)">1×</button>
+              <button type="button" class="rw-btn" data-rw="2" onclick="setRewatch(2)">2×</button>
+              <button type="button" class="rw-btn" data-rw="3" onclick="setRewatch(3)">3×</button>
+            </div>
           </div>
-        </div>
-        <div class="check-row" onclick="toggleCheck('drilled')">
-          <div class="check-box" id="chk-drilled"></div>
-          <span>Drilled in training</span>
-        </div>
-        <div class="check-row" onclick="toggleCheck('worked')">
-          <div class="check-box" id="chk-worked"></div>
-          <span>Worked in sparring</span>
-        </div>
-        <div class="field" style="margin-top:14px">
-          <label class="field-label">Notes / What to improve</label>
-          <textarea id="f-notes" placeholder="What didn't work, what to improve..."></textarea>
-        </div>
-        <div class="field">
-          <label class="field-label">Relevance to my game</label>
-          <div class="stars" id="stars-row">
-            <span class="star" data-s="1">⭐</span>
-            <span class="star" data-s="2">⭐</span>
-            <span class="star" data-s="3">⭐</span>
-            <span class="star" data-s="4">⭐</span>
-            <span class="star" data-s="5">⭐</span>
+          <div class="check-row" onclick="toggleCheck('drilled')">
+            <div class="check-box" id="chk-drilled"></div><span>Drilled in training</span>
           </div>
-        </div>
-        <button type="submit" class="save-btn">Save Entry</button>
-        <div style="height:20px"></div>
-      </form>
-    </div>
+          <div class="check-row" onclick="toggleCheck('worked')">
+            <div class="check-box" id="chk-worked"></div><span>Worked in sparring</span>
+          </div>
+          <div class="field" style="margin-top:14px">
+            <label class="field-label">Notes / What to improve</label>
+            <textarea id="f-notes" placeholder="What didn't work, what to improve..."></textarea>
+          </div>
+          <div class="field">
+            <label class="field-label">Relevance to my game</label>
+            <div class="stars" id="stars-row">
+              <span class="star" data-s="1">⭐</span><span class="star" data-s="2">⭐</span>
+              <span class="star" data-s="3">⭐</span><span class="star" data-s="4">⭐</span><span class="star" data-s="5">⭐</span>
+            </div>
+          </div>
+          <button type="submit" class="save-btn">Save Video Entry</button>
+          <div style="height:20px"></div>
+        </form>
+      </div>
 
-    <!-- NEW TRAINING LOG -->
-    <div class="page" id="page-training-form">
-      <form id="training-form" onsubmit="saveTraining(event)">
-        <div class="section-label blue">Training Session</div>
-        <div class="row2">
-          <div class="field">
-            <label class="field-label">Date *</label>
-            <input type="date" id="t-date" required>
+      <!-- NEW TRAINING -->
+      <div class="page" id="page-training-form">
+        <form id="training-form" onsubmit="saveTraining(event)">
+          <div class="section-label blue">Session Info</div>
+          <div class="row2">
+            <div class="field"><label class="field-label">Date *</label><input type="date" id="t-date" required></div>
+            <div class="field"><label class="field-label">Duration (min)</label><input type="text" id="t-duration" placeholder="e.g. 90"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label class="field-label">Gym / Location</label><input type="text" id="t-gym" placeholder="e.g. Main Academy"></div>
+            <div class="field"><label class="field-label">Instructor</label><input type="text" id="t-instructor" placeholder="Coach name"></div>
           </div>
           <div class="field">
-            <label class="field-label">Duration (min)</label>
-            <input type="text" id="t-duration" placeholder="e.g. 90">
-          </div>
-        </div>
-        <div class="row2">
-          <div class="field">
-            <label class="field-label">Gym / Location</label>
-            <input type="text" id="t-gym" placeholder="e.g. Main Academy">
+            <label class="field-label">Sparring Partner(s)</label>
+            <input type="text" id="t-partner" placeholder="e.g. John, Mike">
           </div>
           <div class="field">
-            <label class="field-label">Instructor</label>
-            <input type="text" id="t-instructor" placeholder="e.g. Coach name">
-          </div>
-        </div>
-        <div class="field">
-          <label class="field-label">Intensity</label>
-          <div class="intensity-btns">
-            <button type="button" class="int-btn" data-int="Light" onclick="setIntensity('Light')">Light</button>
-            <button type="button" class="int-btn" data-int="Medium" onclick="setIntensity('Medium')">Medium</button>
-            <button type="button" class="int-btn" data-int="Hard" onclick="setIntensity('Hard')">Hard</button>
-          </div>
-        </div>
-
-        <div class="section-label blue">Techniques Taught</div>
-        <div class="field">
-          <label class="field-label">Main Technique *</label>
-          <input type="text" id="t-title" placeholder="e.g. De la Riva – Hip Escape" required>
-        </div>
-        <div class="row2">
-          <div class="field">
-            <label class="field-label">Position</label>
-            <select id="t-position">
+            <label class="field-label">Belt Level (yours)</label>
+            <select id="t-belt">
               <option value="">—</option>
-              <option>Closed Guard</option>
-              <option>De la Riva</option>
-              <option>Spider Guard</option>
-              <option>X-Guard</option>
-              <option>Half Guard</option>
-              <option>Side Control</option>
-              <option>Mount</option>
-              <option>Back Control</option>
-              <option>Turtle</option>
-              <option>Standing</option>
-              <option>Leg Locks</option>
-              <option>Other</option>
+              <option>White</option><option>Blue</option><option>Purple</option><option>Brown</option><option>Black</option>
             </select>
           </div>
           <div class="field">
-            <label class="field-label">Type</label>
-            <select id="t-type">
-              <option value="">—</option>
-              <option>Sweep</option>
-              <option>Submission</option>
-              <option>Pass</option>
-              <option>Takedown</option>
-              <option>Escape</option>
-              <option>Control</option>
-              <option>Transition</option>
-              <option>Drill</option>
-            </select>
+            <label class="field-label">Intensity</label>
+            <div class="intensity-btns">
+              <button type="button" class="int-btn" data-int="Light" onclick="setIntensity('Light')">Light</button>
+              <button type="button" class="int-btn" data-int="Medium" onclick="setIntensity('Medium')">Medium</button>
+              <button type="button" class="int-btn" data-int="Hard" onclick="setIntensity('Hard')">Hard</button>
+            </div>
           </div>
-        </div>
 
-        <div class="section-label blue">Technical Analysis</div>
-        <div class="field">
-          <label class="field-label">Trigger — What activates the technique</label>
-          <textarea id="t-trigger" placeholder="e.g. When opponent stands up inside the guard..."></textarea>
-        </div>
+          <div class="section-label blue">Techniques Taught</div>
+          <div class="field"><label class="field-label">Main Technique *</label><input type="text" id="t-title" placeholder="e.g. De la Riva – Hip Escape" required></div>
+          <div class="row3">
+            <div class="field">
+              <label class="field-label">Position</label>
+              <select id="t-position">
+                <option value="">—</option>
+                <option>Closed Guard</option><option>Open Guard</option><option>De la Riva</option>
+                <option>Spider Guard</option><option>X-Guard</option><option>Half Guard</option>
+                <option>Side Control</option><option>North-South</option><option>Knee on Belly</option>
+                <option>Kesa Gatame</option><option>Mount</option><option>Back Control</option>
+                <option>Turtle</option><option>Standing</option><option>Leg Locks</option>
+                <option>Framing the Guard</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label">Situation</label>
+              <select id="t-situation">
+                <option value="">—</option>
+                <option>Sweep</option><option>Submission</option><option>Pass</option>
+                <option>Takedown</option><option>Escape</option><option>Back Take</option>
+                <option>Retention</option><option>Control</option><option>Transition</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label">Technique Type</label>
+              <select id="t-techtype">
+                <option value="">—</option>
+                <option>Offensive</option><option>Defensive</option>
+                <option>Transition</option><option>Retention</option>
+              </select>
+            </div>
+          </div>
 
-        <div class="section-label blue">3 Key Details</div>
-        <div>
+          <div class="section-label blue">Technical Analysis</div>
+          <div class="field">
+            <label class="field-label">Trigger — What activates the technique</label>
+            <textarea id="t-trigger" placeholder="e.g. When opponent stands up inside the guard..."></textarea>
+          </div>
+
+          <div class="section-label blue">3 Key Details</div>
           <div class="detail-row"><div class="detail-num">1</div><input type="text" id="t-d1" placeholder="Key detail 1..."></div>
           <div class="detail-row" style="margin-top:8px"><div class="detail-num">2</div><input type="text" id="t-d2" placeholder="Key detail 2..."></div>
           <div class="detail-row" style="margin-top:8px"><div class="detail-num">3</div><input type="text" id="t-d3" placeholder="Key detail 3..."></div>
-        </div>
 
-        <div class="section-label blue">Connections</div>
-        <div class="field">
-          <label class="field-label">Links to (other technique / position)</label>
-          <input type="text" id="t-connections" placeholder="e.g. X-Guard, Back Take, Armbar">
-        </div>
-
-        <div class="section-label blue">Session Progress</div>
-        <div class="check-row" onclick="toggleTrainingCheck('drilled')">
-          <div class="check-box" id="tchk-drilled"></div>
-          <span>Drilled during class</span>
-        </div>
-        <div class="check-row" onclick="toggleTrainingCheck('sparred')">
-          <div class="check-box" id="tchk-sparred"></div>
-          <span>Sparring rounds</span>
-        </div>
-        <div class="check-row" onclick="toggleTrainingCheck('worked')">
-          <div class="check-box" id="tchk-worked"></div>
-          <span>Technique worked in sparring</span>
-        </div>
-        <div class="field" style="margin-top:14px">
-          <label class="field-label">Session Notes</label>
-          <textarea id="t-notes" placeholder="What happened, what to remember, what to improve..."></textarea>
-        </div>
-        <div class="field">
-          <label class="field-label">Session rating</label>
-          <div class="stars" id="t-stars-row">
-            <span class="t-star" data-s="1">⭐</span>
-            <span class="t-star" data-s="2">⭐</span>
-            <span class="t-star" data-s="3">⭐</span>
-            <span class="t-star" data-s="4">⭐</span>
-            <span class="t-star" data-s="5">⭐</span>
+          <div class="section-label blue">Connections</div>
+          <div class="field">
+            <label class="field-label">Links to (other technique / position)</label>
+            <input type="text" id="t-connections" placeholder="e.g. X-Guard, Back Take, Armbar">
           </div>
+          <div class="field">
+            <label class="field-label">Tags</label>
+            <input type="text" id="t-tags" placeholder="e.g. gi, no-gi, competition">
+          </div>
+
+          <div class="section-label blue">Session Progress</div>
+          <div class="check-row" onclick="toggleTrainingCheck('drilled')"><div class="check-box" id="tchk-drilled"></div><span>Drilled during class</span></div>
+          <div class="check-row" onclick="toggleTrainingCheck('sparred')"><div class="check-box" id="tchk-sparred"></div><span>Sparring rounds</span></div>
+          <div class="check-row" onclick="toggleTrainingCheck('worked')"><div class="check-box" id="tchk-worked"></div><span>Technique worked in sparring</span></div>
+          <div class="field" style="margin-top:14px">
+            <label class="field-label">Session Notes</label>
+            <textarea id="t-notes" placeholder="What happened, what to remember, what to improve..."></textarea>
+          </div>
+          <div class="field">
+            <label class="field-label">Session rating</label>
+            <div class="stars" id="t-stars-row">
+              <span class="t-star" data-s="1">⭐</span><span class="t-star" data-s="2">⭐</span>
+              <span class="t-star" data-s="3">⭐</span><span class="t-star" data-s="4">⭐</span><span class="t-star" data-s="5">⭐</span>
+            </div>
+          </div>
+          <button type="submit" class="save-btn blue-btn">Save Training Log</button>
+          <div style="height:20px"></div>
+        </form>
+      </div>
+
+      <!-- DETAIL: VIDEO -->
+      <div class="page" id="page-detail">
+        <div class="detail-header">
+          <button class="back-btn" onclick="goBack()">← Back</button>
+          <div id="detail-title" class="detail-ttl"></div>
         </div>
-        <button type="submit" class="save-btn blue-btn">Save Training Log</button>
-        <div style="height:20px"></div>
-      </form>
+        <div id="detail-content"></div>
+      </div>
+
+      <!-- DETAIL: TRAINING -->
+      <div class="page" id="page-training-detail">
+        <div class="detail-header">
+          <button class="back-btn" onclick="goBack()">← Back</button>
+          <div id="training-detail-title" class="detail-ttl"></div>
+        </div>
+        <div id="training-detail-content"></div>
+      </div>
+
+      <!-- MAP -->
+      <div class="page" id="page-map" style="padding:0;position:relative;">
+        <div id="map-filter">
+          <button class="map-filter-btn active" id="mf-all" onclick="setMapFilter('all')">All</button>
+          <button class="map-filter-btn" id="mf-video" onclick="setMapFilter('video')">Videos</button>
+          <button class="map-filter-btn" id="mf-training" onclick="setMapFilter('training')">Training</button>
+        </div>
+        <div id="map-controls">
+          <button class="map-ctrl-btn" onclick="zoomMap(1.2)">＋</button>
+          <button class="map-ctrl-btn" onclick="zoomMap(0.8)">－</button>
+          <button class="map-ctrl-btn" onclick="resetMap()">⌂</button>
+        </div>
+        <div id="map-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div> Base position</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Video note</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Training log</div>
+        </div>
+        <div id="map-tooltip"></div>
+        <canvas id="map-canvas"></canvas>
+        <div class="map-empty" id="map-empty" style="display:none">
+          <div style="font-size:40px;margin-bottom:12px">🗺️</div>
+          <div style="color:var(--text-dim)">Add video notes or training logs<br>to see the concept map</div>
+        </div>
+      </div>
+
+    </div><!-- /pages -->
+
+    <!-- BOTTOM NAV (mobile) -->
+    <div id="bottomnav">
+      <button class="nav-btn active" id="nav-home" onclick="showPage('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>Videos
+      </button>
+      <button class="nav-btn" id="nav-training" onclick="showPage('training')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Training
+      </button>
+      <button class="nav-btn" id="nav-stats" onclick="showPage('stats')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Stats
+      </button>
+      <button class="nav-btn" id="nav-form" onclick="handleAdd()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>New
+      </button>
+      <button class="nav-btn" id="nav-map" onclick="showPage('map')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>Map
+      </button>
     </div>
+  </div><!-- /main-area -->
+</div><!-- /app -->
 
-    <!-- DETAIL: VIDEO -->
-    <div class="page" id="page-detail">
-      <div class="detail-header">
-        <button class="back-btn" onclick="goBack()">←</button>
-        <div id="detail-title" class="detail-ttl"></div>
-      </div>
-      <div id="detail-content"></div>
-    </div>
-
-    <!-- DETAIL: TRAINING -->
-    <div class="page" id="page-training-detail">
-      <div class="detail-header">
-        <button class="back-btn" onclick="goBack()">←</button>
-        <div id="training-detail-title" class="detail-ttl"></div>
-      </div>
-      <div id="training-detail-content"></div>
-    </div>
-
-    <!-- MAP -->
-    <div class="page" id="page-map" style="padding:0; position:relative;">
-      <div id="map-filter">
-        <button class="map-filter-btn active" id="mf-all" onclick="setMapFilter('all')">All</button>
-        <button class="map-filter-btn" id="mf-video" onclick="setMapFilter('video')">Videos</button>
-        <button class="map-filter-btn" id="mf-training" onclick="setMapFilter('training')">Training</button>
-      </div>
-      <div id="map-controls">
-        <button class="map-ctrl-btn" onclick="zoomMap(1.2)">＋</button>
-        <button class="map-ctrl-btn" onclick="zoomMap(0.8)">－</button>
-        <button class="map-ctrl-btn" onclick="resetMap()">⌂</button>
-      </div>
-      <div id="map-legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#C8A96E"></div> Base position</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#4a7c59"></div> Video note</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#3a5a7c"></div> Training log</div>
-      </div>
-      <div id="map-tooltip"></div>
-      <canvas id="map-canvas"></canvas>
-      <div class="map-empty" id="map-empty" style="display:none">
-        <div style="font-size:40px;margin-bottom:12px">🗺️</div>
-        <div style="color:var(--text-dim);font-size:13px">Add video notes or training logs<br>to see the concept map</div>
-      </div>
-    </div>
-
-  </div><!-- /pages -->
-
-  <!-- BOTTOM NAV -->
-  <div id="bottomnav">
-    <button class="nav-btn active" id="nav-home" onclick="showPage('home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 10l-4 4-4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-      Videos
-    </button>
-    <button class="nav-btn" id="nav-training" onclick="showPage('training')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-      Training
-    </button>
-    <button class="nav-btn" id="nav-form" onclick="handleAdd()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      New
-    </button>
-    <button class="nav-btn" id="nav-map" onclick="showPage('map')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-      Map
-    </button>
+<!-- DATA MODAL -->
+<div id="modal-overlay">
+  <div id="modal">
+    <button class="modal-close" onclick="closeDataModal()">×</button>
+    <div class="modal-title">Data Management</div>
+    <p style="font-size:12px;color:var(--text-dim);margin-bottom:16px;">Export your data to keep a backup. Import to restore. Clearing data is permanent.</p>
+    <button class="modal-btn primary" onclick="exportData()">⬇ Export Data (JSON)</button>
+    <button class="modal-btn" onclick="document.getElementById('import-input').click()">⬆ Import Data (JSON)</button>
+    <input type="file" id="import-input" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="modal-btn danger" onclick="clearData()">✕ Clear All Data</button>
   </div>
 </div>
 
@@ -495,301 +608,309 @@
 
 <script>
 // ─── STATE ─────────────────────────────────────────────────────
-let notes    = JSON.parse(localStorage.getItem('bjj_notes')    || '[]');
-let trainings = JSON.parse(localStorage.getItem('bjj_trainings') || '[]');
-let editId = null, editTrainingId = null;
-let formRewatch = 0, formChecks = {drilled:false,worked:false}, formRating = 0;
-let tFormChecks = {drilled:false,sparred:false,worked:false}, tFormRating = 0, tFormIntensity = '';
-let activeFilter = 'all', activePage = 'home', prevPage = 'home';
-let mapFilter = 'all';
+let notes     = JSON.parse(localStorage.getItem('bjj_notes')    || '[]');
+let trainings = JSON.parse(localStorage.getItem('bjj_trainings')|| '[]');
+let editId=null, editTrainingId=null;
+let formRewatch=0, formChecks={drilled:false,worked:false}, formRating=0;
+let tFormChecks={drilled:false,sparred:false,worked:false}, tFormRating=0, tFormIntensity='';
+let activeFilter='all', activePage='home', prevPage='home';
+let currentTrainingFilter='all', mapFilter='all';
 
 function saveNotes()     { localStorage.setItem('bjj_notes',     JSON.stringify(notes)); }
 function saveTrainings() { localStorage.setItem('bjj_trainings', JSON.stringify(trainings)); }
 
 // ─── NAV ───────────────────────────────────────────────────────
 function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  const nb = document.getElementById('nav-' + name);
-  if (nb) nb.classList.add('active');
-  activePage = name;
-  if (name === 'map')      setTimeout(drawMap, 50);
-  if (name === 'home')     renderArchive();
-  if (name === 'training') renderTraining();
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn,.snav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  ['nav-','snav-'].forEach(pre=>{ const el=document.getElementById(pre+name); if(el) el.classList.add('active'); });
+  activePage=name;
+  if(name==='map')      setTimeout(drawMap,50);
+  if(name==='home')     renderArchive();
+  if(name==='training') renderTraining();
+  if(name==='stats')    renderStats();
 }
-
 function goBack() { showPage(prevPage); }
-
-// handleAdd: open right form based on current page
 function handleAdd() {
-  if (activePage === 'training' || activePage === 'training-form') {
-    newTraining();
-  } else {
-    newNote();
-  }
+  if(activePage==='training'||activePage==='training-form') newTraining();
+  else newNote();
 }
 
 // ─── VIDEO FORM ────────────────────────────────────────────────
 function newNote() {
-  editId = null;
-  document.getElementById('note-form').reset();
+  editId=null; document.getElementById('note-form').reset();
   formRewatch=0; formChecks={drilled:false,worked:false}; formRating=0;
   updateCheckUI(); updateStarsUI(); updateRewatchUI();
-  prevPage = activePage === 'home' ? 'home' : activePage;
+  prevPage=activePage==='home'?'home':activePage;
   showPage('form');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('nav-form').classList.add('active');
+  document.querySelectorAll('.nav-btn,.snav-btn').forEach(b=>b.classList.remove('active'));
+  ['nav-form'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.add('active'); });
 }
+function setRewatch(n){formRewatch=n;updateRewatchUI();}
+function updateRewatchUI(){document.querySelectorAll('.rw-btn').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.rw)<=formRewatch));}
+function toggleCheck(k){formChecks[k]=!formChecks[k];updateCheckUI();}
+function updateCheckUI(){['drilled','worked'].forEach(k=>{const el=document.getElementById('chk-'+k);el.classList.toggle('checked',formChecks[k]);el.textContent=formChecks[k]?'✓':'';}); }
+document.querySelectorAll('.star').forEach(s=>s.addEventListener('click',()=>{formRating=parseInt(s.dataset.s);updateStarsUI();}));
+function updateStarsUI(){document.querySelectorAll('.star').forEach(s=>s.classList.toggle('on',parseInt(s.dataset.s)<=formRating));}
 
-function setRewatch(n) { formRewatch=n; updateRewatchUI(); }
-function updateRewatchUI() {
-  document.querySelectorAll('.rw-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.rw) <= formRewatch));
-}
-function toggleCheck(k) { formChecks[k]=!formChecks[k]; updateCheckUI(); }
-function updateCheckUI() {
-  ['drilled','worked'].forEach(k => {
-    const el = document.getElementById('chk-'+k);
-    el.classList.toggle('checked', formChecks[k]);
-    el.textContent = formChecks[k] ? '✓' : '';
-  });
-}
-document.querySelectorAll('.star').forEach(s => s.addEventListener('click', () => { formRating=parseInt(s.dataset.s); updateStarsUI(); }));
-function updateStarsUI() { document.querySelectorAll('.star').forEach(s => s.classList.toggle('on', parseInt(s.dataset.s) <= formRating)); }
-
-function saveNote(e) {
+function saveNote(e){
   e.preventDefault();
-  const note = {
-    id: editId || Date.now(),
-    title: document.getElementById('f-title').value,
-    series: document.getElementById('f-series').value,
-    date: document.getElementById('f-date').value,
-    instructor: document.getElementById('f-instructor').value,
-    position: document.getElementById('f-position').value,
-    type: document.getElementById('f-type').value,
-    trigger: document.getElementById('f-trigger').value,
-    details: [document.getElementById('f-d1').value, document.getElementById('f-d2').value, document.getElementById('f-d3').value].filter(Boolean),
-    connections: document.getElementById('f-connections').value,
-    rewatched: formRewatch, drilled: formChecks.drilled, worked: formChecks.worked,
-    notes: document.getElementById('f-notes').value, rating: formRating,
+  const note={
+    id:editId||Date.now(),
+    title:document.getElementById('f-title').value,
+    url:document.getElementById('f-url').value,
+    series:document.getElementById('f-series').value,
+    date:document.getElementById('f-date').value,
+    instructor:document.getElementById('f-instructor').value,
+    belt:document.getElementById('f-belt').value,
+    position:document.getElementById('f-position').value,
+    situation:document.getElementById('f-situation').value,
+    techtype:document.getElementById('f-techtype').value,
+    trigger:document.getElementById('f-trigger').value,
+    details:[document.getElementById('f-d1').value,document.getElementById('f-d2').value,document.getElementById('f-d3').value].filter(Boolean),
+    connections:document.getElementById('f-connections').value,
+    tags:document.getElementById('f-tags').value,
+    rewatched:formRewatch,drilled:formChecks.drilled,worked:formChecks.worked,
+    notes:document.getElementById('f-notes').value,rating:formRating,
   };
-  if (editId) { const i=notes.findIndex(n=>n.id===editId); if(i>=0) notes[i]=note; }
+  if(editId){const i=notes.findIndex(n=>n.id===editId);if(i>=0)notes[i]=note;}
   else notes.unshift(note);
-  saveNotes(); showToast('✓ Saved'); showPage('home');
+  saveNotes();showToast('✓ Video saved');showPage('home');
 }
 
 // ─── TRAINING FORM ─────────────────────────────────────────────
-function newTraining() {
-  editTrainingId = null;
-  document.getElementById('training-form').reset();
-  tFormChecks={drilled:false,sparred:false,worked:false}; tFormRating=0; tFormIntensity='';
-  updateTrainingCheckUI(); updateTStarsUI(); updateIntensityUI();
-  prevPage = 'training';
-  showPage('training-form');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('nav-form').classList.add('active');
+function newTraining(){
+  editTrainingId=null;document.getElementById('training-form').reset();
+  tFormChecks={drilled:false,sparred:false,worked:false};tFormRating=0;tFormIntensity='';
+  updateTrainingCheckUI();updateTStarsUI();updateIntensityUI();
+  prevPage='training';showPage('training-form');
+  document.querySelectorAll('.nav-btn,.snav-btn').forEach(b=>b.classList.remove('active'));
 }
+function setIntensity(v){tFormIntensity=v;updateIntensityUI();}
+function updateIntensityUI(){document.querySelectorAll('.int-btn').forEach(b=>b.classList.toggle('active',b.dataset.int===tFormIntensity));}
+function toggleTrainingCheck(k){tFormChecks[k]=!tFormChecks[k];updateTrainingCheckUI();}
+function updateTrainingCheckUI(){['drilled','sparred','worked'].forEach(k=>{const el=document.getElementById('tchk-'+k);el.classList.toggle('checked',tFormChecks[k]);el.textContent=tFormChecks[k]?'✓':'';}); }
+document.querySelectorAll('.t-star').forEach(s=>s.addEventListener('click',()=>{tFormRating=parseInt(s.dataset.s);updateTStarsUI();}));
+function updateTStarsUI(){document.querySelectorAll('.t-star').forEach(s=>s.classList.toggle('on',parseInt(s.dataset.s)<=tFormRating));}
 
-function setIntensity(v) { tFormIntensity=v; updateIntensityUI(); }
-function updateIntensityUI() {
-  document.querySelectorAll('.int-btn').forEach(b => b.classList.toggle('active', b.dataset.int === tFormIntensity));
-}
-function toggleTrainingCheck(k) { tFormChecks[k]=!tFormChecks[k]; updateTrainingCheckUI(); }
-function updateTrainingCheckUI() {
-  ['drilled','sparred','worked'].forEach(k => {
-    const el = document.getElementById('tchk-'+k);
-    el.classList.toggle('checked', tFormChecks[k]);
-    el.textContent = tFormChecks[k] ? '✓' : '';
-  });
-}
-document.querySelectorAll('.t-star').forEach(s => s.addEventListener('click', () => { tFormRating=parseInt(s.dataset.s); updateTStarsUI(); }));
-function updateTStarsUI() { document.querySelectorAll('.t-star').forEach(s => s.classList.toggle('on', parseInt(s.dataset.s) <= tFormRating)); }
-
-function saveTraining(e) {
+function saveTraining(e){
   e.preventDefault();
-  const t = {
-    id: editTrainingId || Date.now(),
-    date: document.getElementById('t-date').value,
-    duration: document.getElementById('t-duration').value,
-    gym: document.getElementById('t-gym').value,
-    instructor: document.getElementById('t-instructor').value,
-    intensity: tFormIntensity,
-    title: document.getElementById('t-title').value,
-    position: document.getElementById('t-position').value,
-    type: document.getElementById('t-type').value,
-    trigger: document.getElementById('t-trigger').value,
-    details: [document.getElementById('t-d1').value, document.getElementById('t-d2').value, document.getElementById('t-d3').value].filter(Boolean),
-    connections: document.getElementById('t-connections').value,
-    drilled: tFormChecks.drilled, sparred: tFormChecks.sparred, worked: tFormChecks.worked,
-    notes: document.getElementById('t-notes').value, rating: tFormRating,
+  const t={
+    id:editTrainingId||Date.now(),
+    date:document.getElementById('t-date').value,
+    duration:document.getElementById('t-duration').value,
+    gym:document.getElementById('t-gym').value,
+    instructor:document.getElementById('t-instructor').value,
+    partner:document.getElementById('t-partner').value,
+    belt:document.getElementById('t-belt').value,
+    intensity:tFormIntensity,
+    title:document.getElementById('t-title').value,
+    position:document.getElementById('t-position').value,
+    situation:document.getElementById('t-situation').value,
+    techtype:document.getElementById('t-techtype').value,
+    trigger:document.getElementById('t-trigger').value,
+    details:[document.getElementById('t-d1').value,document.getElementById('t-d2').value,document.getElementById('t-d3').value].filter(Boolean),
+    connections:document.getElementById('t-connections').value,
+    tags:document.getElementById('t-tags').value,
+    drilled:tFormChecks.drilled,sparred:tFormChecks.sparred,worked:tFormChecks.worked,
+    notes:document.getElementById('t-notes').value,rating:tFormRating,
   };
-  if (editTrainingId) { const i=trainings.findIndex(x=>x.id===editTrainingId); if(i>=0) trainings[i]=t; }
+  if(editTrainingId){const i=trainings.findIndex(x=>x.id===editTrainingId);if(i>=0)trainings[i]=t;}
   else trainings.unshift(t);
-  saveTrainings(); showToast('✓ Training saved'); showPage('training');
+  saveTrainings();showToast('✓ Training saved');showPage('training');
 }
 
 // ─── ARCHIVE: VIDEOS ───────────────────────────────────────────
-function renderArchive() {
-  const chips = document.getElementById('filter-chips');
-  const positions = [...new Set(notes.filter(n=>n.position).map(n=>n.position))];
-  chips.innerHTML = '';
-  [['all','All'], ...positions.map(p=>[p,p])].forEach(([val,label]) => {
-    const c = document.createElement('button');
-    c.className = 'chip' + (activeFilter===val?' active':'');
-    c.textContent = label;
-    c.onclick = () => { activeFilter=val; renderArchive(); };
-    chips.appendChild(c);
+function renderArchive(){
+  const positions=[...new Set(notes.filter(n=>n.position).map(n=>n.position))];
+  const chips=document.getElementById('filter-chips');
+  chips.innerHTML='';
+  [['all','All'],...positions.map(p=>[p,p])].forEach(([val,label])=>{
+    const c=document.createElement('button');c.className='chip'+(activeFilter===val?' active':'');c.textContent=label;
+    c.onclick=()=>{activeFilter=val;renderArchive();};chips.appendChild(c);
   });
-
-  const q = (document.getElementById('search-input')?.value||'').toLowerCase();
-  let filtered = notes.filter(n => {
-    const mf = activeFilter==='all' || n.position===activeFilter;
-    const ms = !q || n.title.toLowerCase().includes(q) || (n.instructor||'').toLowerCase().includes(q);
-    return mf && ms;
+  const q=(document.getElementById('search-input')?.value||'').toLowerCase();
+  let filtered=notes.filter(n=>{
+    const mf=activeFilter==='all'||n.position===activeFilter;
+    const ms=!q||n.title.toLowerCase().includes(q)||(n.instructor||'').toLowerCase().includes(q)||(n.series||'').toLowerCase().includes(q)||(n.tags||'').toLowerCase().includes(q);
+    return mf&&ms;
   });
-
-  const list = document.getElementById('archive-list');
-  if (!filtered.length) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div style="color:var(--text-dim)">No video entries yet.</div><div style="color:var(--text-faint);margin-top:6px;font-size:11px">Tap ＋ to add your first video.</div></div>`;
-    return;
-  }
-  const grouped = {};
-  filtered.forEach(n => { const g=n.series||'No series'; if(!grouped[g]) grouped[g]=[]; grouped[g].push(n); });
-  list.innerHTML = '';
-  Object.entries(grouped).forEach(([g,ns]) => {
-    const h=document.createElement('div'); h.className='section-header'; h.textContent=g; list.appendChild(h);
-    ns.forEach(n => {
-      const card=document.createElement('div'); card.className='card';
-      card.innerHTML=`<div class="card-title">${n.title}</div><div class="card-meta">${[n.instructor,n.date].filter(Boolean).join(' · ')}</div><div class="card-badges">${n.position?`<span class="badge badge-gold">${n.position}</span>`:''} ${n.type?`<span class="badge badge-dim">${n.type}</span>`:''} ${(n.drilled&&n.rewatched>=2)?'<span class="badge badge-green">Complete</span>':''} ${n.rating>=4?'<span class="badge badge-gold">★★★★+</span>':''}</div>`;
-      card.onclick=()=>showDetail(n.id);
-      list.appendChild(card);
+  const list=document.getElementById('archive-list');
+  if(!filtered.length){list.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><div style="color:var(--text-dim)">No video entries yet.</div><div style="color:var(--text-faint);margin-top:6px;font-size:11px">Tap ＋ to add your first video.</div></div>`;return;}
+  const grouped={};
+  filtered.forEach(n=>{const g=n.series||'No series';if(!grouped[g])grouped[g]=[];grouped[g].push(n);});
+  list.innerHTML='';
+  Object.entries(grouped).forEach(([g,ns])=>{
+    const h=document.createElement('div');h.className='section-header';h.textContent=g;list.appendChild(h);
+    ns.forEach(n=>{
+      const card=document.createElement('div');card.className='card';
+      const tags=(n.tags||'').split(',').filter(Boolean).map(t=>`<span class="badge badge-dim">${t.trim()}</span>`).join('');
+      card.innerHTML=`<div class="card-title">${n.title}${n.url?` <span style="color:var(--gold);font-size:11px">🔗</span>`:''}</div><div class="card-meta">${[n.instructor,n.date].filter(Boolean).join(' · ')}</div><div class="card-badges">${n.position?`<span class="badge badge-gold">${n.position}</span>`:''} ${n.situation?`<span class="badge badge-dim">${n.situation}</span>`:''} ${n.techtype?`<span class="badge badge-dim">${n.techtype}</span>`:''} ${(n.drilled&&n.rewatched>=2)?'<span class="badge badge-green">Complete</span>':''} ${tags}</div>`;
+      card.onclick=()=>showDetail(n.id);list.appendChild(card);
     });
   });
 }
 
 // ─── ARCHIVE: TRAINING ─────────────────────────────────────────
-function renderTraining() {
-  const chips = document.getElementById('training-filter-chips');
-  const positions = [...new Set(trainings.filter(t=>t.position).map(t=>t.position))];
-  chips.innerHTML = '';
-  [['all','All'], ...positions.map(p=>[p,p])].forEach(([val,label]) => {
-    const c=document.createElement('button'); c.className='chip'; c.textContent=label;
-    if(val==='all') c.classList.add('active');
-    c.onclick = () => {
-      document.querySelectorAll('#training-filter-chips .chip').forEach(x=>x.classList.remove('active'));
-      c.classList.add('active');
-      renderTrainingList(val);
-    };
-    chips.appendChild(c);
+function renderTraining(){
+  const positions=[...new Set(trainings.filter(t=>t.position).map(t=>t.position))];
+  const chips=document.getElementById('training-filter-chips');
+  chips.innerHTML='';
+  [['all','All'],...positions.map(p=>[p,p])].forEach(([val,label])=>{
+    const c=document.createElement('button');c.className='chip'+(currentTrainingFilter===val?' active':'');c.textContent=label;
+    c.onclick=()=>{currentTrainingFilter=val;renderTrainingList(val);};chips.appendChild(c);
   });
-  renderTrainingList('all');
+  renderTrainingList(currentTrainingFilter);
 }
 
-function renderTrainingList(filter) {
-  const list = document.getElementById('training-list');
-  let filtered = filter==='all' ? trainings : trainings.filter(t=>t.position===filter);
-  if (!filtered.length) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🥋</div><div style="color:var(--text-dim)">No training logs yet.</div><div style="color:var(--text-faint);margin-top:6px;font-size:11px">Tap ＋ to log your first session.</div></div>`;
-    return;
-  }
-  // group by month
-  const grouped = {};
-  filtered.forEach(t => {
-    const g = t.date ? t.date.substring(0,7) : 'No date';
-    if(!grouped[g]) grouped[g]=[];
-    grouped[g].push(t);
+function renderTrainingList(filter){
+  currentTrainingFilter=filter;
+  const q=(document.getElementById('training-search')?.value||'').toLowerCase();
+  let filtered=trainings.filter(t=>{
+    const mf=filter==='all'||t.position===filter;
+    const ms=!q||t.title.toLowerCase().includes(q)||(t.gym||'').toLowerCase().includes(q)||(t.instructor||'').toLowerCase().includes(q)||(t.tags||'').toLowerCase().includes(q)||(t.partner||'').toLowerCase().includes(q);
+    return mf&&ms;
   });
-  list.innerHTML = '';
-  Object.entries(grouped).sort((a,b)=>b[0].localeCompare(a[0])).forEach(([month,ts]) => {
-    const h=document.createElement('div'); h.className='section-header blue';
-    h.textContent=month; list.appendChild(h);
-    ts.forEach(t => {
-      const card=document.createElement('div'); card.className='card training-card';
-      card.innerHTML=`<div class="card-title">${t.title}</div><div class="card-meta">${[t.date, t.gym, t.instructor].filter(Boolean).join(' · ')}</div><div class="card-badges">${t.position?`<span class="badge badge-blue">${t.position}</span>`:''} ${t.type?`<span class="badge badge-dim">${t.type}</span>`:''} ${t.intensity?`<span class="badge badge-dim">${t.intensity}</span>`:''} ${t.duration?`<span class="badge badge-dim">${t.duration}min</span>`:''}</div>`;
-      card.onclick=()=>showTrainingDetail(t.id);
-      list.appendChild(card);
+  const list=document.getElementById('training-list');
+  if(!filtered.length){list.innerHTML=`<div class="empty-state"><div class="empty-icon">🥋</div><div style="color:var(--text-dim)">No training logs yet.</div><div style="color:var(--text-faint);margin-top:6px;font-size:11px">Tap ＋ to log your first session.</div></div>`;return;}
+  const grouped={};
+  filtered.forEach(t=>{const g=t.date?t.date.substring(0,7):'No date';if(!grouped[g])grouped[g]=[];grouped[g].push(t);});
+  list.innerHTML='';
+  Object.entries(grouped).sort((a,b)=>b[0].localeCompare(a[0])).forEach(([month,ts])=>{
+    const h=document.createElement('div');h.className='section-header blue';h.textContent=month;list.appendChild(h);
+    ts.forEach(t=>{
+      const card=document.createElement('div');card.className='card training-card';
+      const tags=(t.tags||'').split(',').filter(Boolean).map(tag=>`<span class="badge badge-dim">${tag.trim()}</span>`).join('');
+      card.innerHTML=`<div class="card-title">${t.title}</div><div class="card-meta">${[t.date,t.gym,t.instructor,t.partner?'w/ '+t.partner:''].filter(Boolean).join(' · ')}</div><div class="card-badges">${t.position?`<span class="badge badge-blue">${t.position}</span>`:''} ${t.situation?`<span class="badge badge-dim">${t.situation}</span>`:''} ${t.intensity?`<span class="badge badge-dim">${t.intensity}</span>`:''} ${t.duration?`<span class="badge badge-dim">${t.duration}min</span>`:''} ${tags}</div>`;
+      card.onclick=()=>showTrainingDetail(t.id);list.appendChild(card);
     });
   });
 }
 
+// ─── STATS ─────────────────────────────────────────────────────
+function renderStats(){
+  const el=document.getElementById('stats-content');
+  const totalV=notes.length, totalT=trainings.length;
+  const completeV=notes.filter(n=>n.drilled&&n.rewatched>=2).length;
+  const thisMonth=new Date().toISOString().substring(0,7);
+  const monthT=trainings.filter(t=>t.date&&t.date.startsWith(thisMonth)).length;
+  const avgRatingV=notes.length?( notes.reduce((s,n)=>s+(n.rating||0),0)/notes.length).toFixed(1):0;
+  const avgRatingT=trainings.length?(trainings.reduce((s,t)=>s+(t.rating||0),0)/trainings.length).toFixed(1):0;
+  const totalMin=trainings.reduce((s,t)=>s+(parseInt(t.duration)||0),0);
+
+  // top positions (videos)
+  const posCounts={};
+  notes.forEach(n=>{if(n.position)posCounts[n.position]=(posCounts[n.position]||0)+1;});
+  const topPos=Object.entries(posCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxPos=topPos[0]?topPos[0][1]:1;
+
+  // top positions (training)
+  const tPosCounts={};
+  trainings.forEach(t=>{if(t.position)tPosCounts[t.position]=(tPosCounts[t.position]||0)+1;});
+  const topTPos=Object.entries(tPosCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxTPos=topTPos[0]?topTPos[0][1]:1;
+
+  // recent activity (last 8 weeks)
+  const weeks={};
+  for(let i=7;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i*7);const w=d.toISOString().substring(0,7);weeks[w]=(weeks[w]||0);}
+  trainings.forEach(t=>{if(t.date){const w=t.date.substring(0,7);if(w in weeks)weeks[w]++;}});
+
+  el.innerHTML=`
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-card-title">Video Entries</div><div class="stat-big">${totalV}</div><div class="stat-sub">${completeV} completed</div></div>
+    <div class="stat-card"><div class="stat-card-title">Training Sessions</div><div class="stat-big">${totalT}</div><div class="stat-sub">${monthT} this month</div></div>
+    <div class="stat-card"><div class="stat-card-title">Mat Time</div><div class="stat-big">${Math.round(totalMin/60)}h</div><div class="stat-sub">${totalMin} min logged</div></div>
+    <div class="stat-card"><div class="stat-card-title">Avg Rating</div><div class="stat-big">${avgRatingV}★</div><div class="stat-sub">videos · ${avgRatingT}★ training</div></div>
+  </div>
+  ${topPos.length?`<div class="stat-card"><div class="stat-card-title">Top Positions — Videos</div>${topPos.map(([p,c])=>`<div class="stat-bar-wrap"><div class="stat-bar-label"><span>${p}</span><span>${c}</span></div><div class="stat-bar"><div class="stat-bar-fill" style="width:${(c/maxPos*100).toFixed(0)}%"></div></div></div>`).join('')}</div>`:''}
+  ${topTPos.length?`<div class="stat-card"><div class="stat-card-title">Top Positions — Training</div>${topTPos.map(([p,c])=>`<div class="stat-bar-wrap"><div class="stat-bar-label"><span>${p}</span><span>${c}</span></div><div class="stat-bar"><div class="stat-bar-fill blue" style="width:${(c/maxTPos*100).toFixed(0)}%"></div></div></div>`).join('')}</div>`:''}
+  ${Object.keys(weeks).length?`<div class="stat-card"><div class="stat-card-title">Monthly Activity</div><div style="display:flex;align-items:flex-end;gap:6px;height:60px;margin-top:8px">${Object.entries(weeks).map(([m,c])=>{const h=c?Math.max(10,(c/Math.max(...Object.values(weeks)))*50):4;return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:100%;height:${h}px;background:${c?'var(--blue)':'var(--bg3)'};border-radius:2px"></div><span style="font-size:8px;color:var(--text-faint)">${m.substring(5)}</span></div>`}).join('')}</div></div>`:''}
+  `;
+}
+
 // ─── DETAIL: VIDEO ─────────────────────────────────────────────
-function showDetail(id) {
-  const n=notes.find(x=>x.id===id); if(!n) return;
+function showDetail(id){
+  const n=notes.find(x=>x.id===id);if(!n)return;
   prevPage='home';
   document.getElementById('detail-title').textContent=n.title;
+  const tags=(n.tags||'').split(',').filter(Boolean).map(t=>`<span class="badge badge-dim" style="margin-right:4px">${t.trim()}</span>`).join('');
   document.getElementById('detail-content').innerHTML=`
     <div class="detail-section">
-      ${n.series?`<div class="detail-key">Series</div><div class="detail-val">${n.series}</div>`:''}
-      <div style="display:flex;gap:20px;margin-top:${n.series?'12':'0'}px">
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        ${n.series?`<div><div class="detail-key">Series</div><div class="detail-val">${n.series}</div></div>`:''}
         ${n.instructor?`<div><div class="detail-key">Instructor</div><div class="detail-val">${n.instructor}</div></div>`:''}
         ${n.date?`<div><div class="detail-key">Date</div><div class="detail-val">${n.date}</div></div>`:''}
+        ${n.belt?`<div><div class="detail-key">Belt</div><div class="detail-val">${n.belt}</div></div>`:''}
       </div>
+      ${n.url?`<a href="${n.url}" target="_blank" class="video-link-btn">▶ Watch Video</a>`:''}
     </div>
-    ${n.position||n.type?`<div class="detail-section"><div style="display:flex;gap:20px">${n.position?`<div><div class="detail-key">Position</div><div class="detail-val">${n.position}</div></div>`:''} ${n.type?`<div><div class="detail-key">Type</div><div class="detail-val">${n.type}</div></div>`:''}</div></div>`:''}
+    ${n.position||n.situation||n.techtype?`<div class="detail-section"><div style="display:flex;gap:16px;flex-wrap:wrap">
+      ${n.position?`<div><div class="detail-key">Position</div><div class="detail-val">${n.position}</div></div>`:''}
+      ${n.situation?`<div><div class="detail-key">Situation</div><div class="detail-val">${n.situation}</div></div>`:''}
+      ${n.techtype?`<div><div class="detail-key">Technique Type</div><div class="detail-val">${n.techtype}</div></div>`:''}
+    </div></div>`:''}
     ${n.trigger?`<div class="detail-section"><div class="detail-key">Trigger</div><div class="detail-val">${n.trigger}</div></div>`:''}
     ${n.details&&n.details.length?`<div class="detail-section"><div class="detail-key">3 Key Details</div>${n.details.map((d,i)=>`<div style="display:flex;gap:10px;align-items:flex-start;margin-top:8px"><div class="detail-num">${i+1}</div><div class="detail-val">${d}</div></div>`).join('')}</div>`:''}
     ${n.connections?`<div class="detail-section"><div class="detail-key">Connections</div><div class="detail-val">${n.connections}</div></div>`:''}
+    ${tags?`<div class="detail-section"><div class="detail-key">Tags</div><div style="margin-top:4px">${tags}</div></div>`:''}
     ${n.notes?`<div class="detail-section"><div class="detail-key">Notes</div><div class="detail-val">${n.notes}</div></div>`:''}
     <div class="detail-grid">
       <div class="detail-stat"><div class="detail-stat-val">${n.rewatched||0}×</div><div class="detail-stat-lbl">Watched</div></div>
       <div class="detail-stat"><div class="detail-stat-val" style="color:${n.drilled?'var(--green)':'var(--text-faint)'}">${n.drilled?'✓':'○'}</div><div class="detail-stat-lbl">Drilled</div></div>
+      <div class="detail-stat"><div class="detail-stat-val" style="color:${n.worked?'var(--green)':'var(--text-faint)'}">${n.worked?'✓':'○'}</div><div class="detail-stat-lbl">Worked</div></div>
       <div class="detail-stat"><div class="detail-stat-val">${'⭐'.repeat(n.rating||0)||'—'}</div><div class="detail-stat-lbl">Rating</div></div>
     </div>
     <div style="display:flex;gap:10px;margin-top:20px"><button class="save-btn" style="flex:1" onclick="editNote(${n.id})">✎ Edit</button></div>
     <button class="delete-btn" onclick="deleteNote(${n.id})">Delete entry</button>
     <div style="height:20px"></div>`;
   showPage('detail');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn,.snav-btn').forEach(b=>b.classList.remove('active'));
 }
 
-function editNote(id) {
-  const n=notes.find(x=>x.id===id); if(!n) return;
+function editNote(id){
+  const n=notes.find(x=>x.id===id);if(!n)return;
   editId=id;
-  document.getElementById('f-title').value=n.title;
-  document.getElementById('f-series').value=n.series||'';
-  document.getElementById('f-date').value=n.date||'';
-  document.getElementById('f-instructor').value=n.instructor||'';
-  document.getElementById('f-position').value=n.position||'';
-  document.getElementById('f-type').value=n.type||'';
-  document.getElementById('f-trigger').value=n.trigger||'';
+  ['title','url','series','date','instructor','belt','position','situation','techtype','trigger','connections','tags','notes'].forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.value=n[f]||'';});
   document.getElementById('f-d1').value=(n.details||[])[0]||'';
   document.getElementById('f-d2').value=(n.details||[])[1]||'';
   document.getElementById('f-d3').value=(n.details||[])[2]||'';
-  document.getElementById('f-connections').value=n.connections||'';
-  document.getElementById('f-notes').value=n.notes||'';
-  formRewatch=n.rewatched||0; formChecks={drilled:n.drilled||false,worked:n.worked||false}; formRating=n.rating||0;
-  updateRewatchUI(); updateCheckUI(); updateStarsUI();
-  prevPage='detail'; showPage('form');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  formRewatch=n.rewatched||0;formChecks={drilled:n.drilled||false,worked:n.worked||false};formRating=n.rating||0;
+  updateRewatchUI();updateCheckUI();updateStarsUI();
+  prevPage='detail';showPage('form');
+  document.querySelectorAll('.nav-btn,.snav-btn').forEach(b=>b.classList.remove('active'));
 }
-
-function deleteNote(id) {
-  if(!confirm('Delete this entry?')) return;
-  notes=notes.filter(n=>n.id!==id); saveNotes(); showToast('Deleted'); showPage('home');
-}
+function deleteNote(id){if(!confirm('Delete this entry?'))return;notes=notes.filter(n=>n.id!==id);saveNotes();showToast('Deleted');showPage('home');}
 
 // ─── DETAIL: TRAINING ──────────────────────────────────────────
-function showTrainingDetail(id) {
-  const t=trainings.find(x=>x.id===id); if(!t) return;
+function showTrainingDetail(id){
+  const t=trainings.find(x=>x.id===id);if(!t)return;
   prevPage='training';
   document.getElementById('training-detail-title').textContent=t.title;
+  const tags=(t.tags||'').split(',').filter(Boolean).map(tag=>`<span class="badge badge-dim" style="margin-right:4px">${tag.trim()}</span>`).join('');
   document.getElementById('training-detail-content').innerHTML=`
-    <div class="detail-section">
-      <div style="display:flex;gap:20px;flex-wrap:wrap">
-        ${t.date?`<div><div class="detail-key">Date</div><div class="detail-val">${t.date}</div></div>`:''}
-        ${t.duration?`<div><div class="detail-key">Duration</div><div class="detail-val">${t.duration} min</div></div>`:''}
-        ${t.gym?`<div><div class="detail-key">Gym</div><div class="detail-val">${t.gym}</div></div>`:''}
-        ${t.instructor?`<div><div class="detail-key">Instructor</div><div class="detail-val">${t.instructor}</div></div>`:''}
-        ${t.intensity?`<div><div class="detail-key">Intensity</div><div class="detail-val">${t.intensity}</div></div>`:''}
-      </div>
-    </div>
-    ${t.position||t.type?`<div class="detail-section"><div style="display:flex;gap:20px">${t.position?`<div><div class="detail-key">Position</div><div class="detail-val">${t.position}</div></div>`:''} ${t.type?`<div><div class="detail-key">Type</div><div class="detail-val">${t.type}</div></div>`:''}</div></div>`:''}
+    <div class="detail-section"><div style="display:flex;gap:16px;flex-wrap:wrap">
+      ${t.date?`<div><div class="detail-key">Date</div><div class="detail-val">${t.date}</div></div>`:''}
+      ${t.duration?`<div><div class="detail-key">Duration</div><div class="detail-val">${t.duration} min</div></div>`:''}
+      ${t.gym?`<div><div class="detail-key">Gym</div><div class="detail-val">${t.gym}</div></div>`:''}
+      ${t.instructor?`<div><div class="detail-key">Instructor</div><div class="detail-val">${t.instructor}</div></div>`:''}
+      ${t.partner?`<div><div class="detail-key">Partner(s)</div><div class="detail-val">${t.partner}</div></div>`:''}
+      ${t.belt?`<div><div class="detail-key">Belt</div><div class="detail-val">${t.belt}</div></div>`:''}
+      ${t.intensity?`<div><div class="detail-key">Intensity</div><div class="detail-val">${t.intensity}</div></div>`:''}
+    </div></div>
+    ${t.position||t.situation||t.techtype?`<div class="detail-section"><div style="display:flex;gap:16px;flex-wrap:wrap">
+      ${t.position?`<div><div class="detail-key">Position</div><div class="detail-val">${t.position}</div></div>`:''}
+      ${t.situation?`<div><div class="detail-key">Situation</div><div class="detail-val">${t.situation}</div></div>`:''}
+      ${t.techtype?`<div><div class="detail-key">Technique Type</div><div class="detail-val">${t.techtype}</div></div>`:''}
+    </div></div>`:''}
     ${t.trigger?`<div class="detail-section"><div class="detail-key">Trigger</div><div class="detail-val">${t.trigger}</div></div>`:''}
     ${t.details&&t.details.length?`<div class="detail-section"><div class="detail-key">3 Key Details</div>${t.details.map((d,i)=>`<div style="display:flex;gap:10px;align-items:flex-start;margin-top:8px"><div class="detail-num">${i+1}</div><div class="detail-val">${d}</div></div>`).join('')}</div>`:''}
     ${t.connections?`<div class="detail-section"><div class="detail-key">Connections</div><div class="detail-val">${t.connections}</div></div>`:''}
+    ${tags?`<div class="detail-section"><div class="detail-key">Tags</div><div style="margin-top:4px">${tags}</div></div>`:''}
     ${t.notes?`<div class="detail-section"><div class="detail-key">Session Notes</div><div class="detail-val">${t.notes}</div></div>`:''}
     <div class="detail-grid">
       <div class="detail-stat"><div class="detail-stat-val" style="color:${t.drilled?'var(--green)':'var(--text-faint)'}">${t.drilled?'✓':'○'}</div><div class="detail-stat-lbl">Drilled</div></div>
+      <div class="detail-stat"><div class="detail-stat-val" style="color:${t.sparred?'var(--green)':'var(--text-faint)'}">${t.sparred?'✓':'○'}</div><div class="detail-stat-lbl">Sparred</div></div>
       <div class="detail-stat"><div class="detail-stat-val" style="color:${t.worked?'var(--green)':'var(--text-faint)'}">${t.worked?'✓':'○'}</div><div class="detail-stat-lbl">Worked</div></div>
       <div class="detail-stat"><div class="detail-stat-val">${'⭐'.repeat(t.rating||0)||'—'}</div><div class="detail-stat-lbl">Rating</div></div>
     </div>
@@ -797,233 +918,225 @@ function showTrainingDetail(id) {
     <button class="delete-btn" onclick="deleteTraining(${t.id})">Delete log</button>
     <div style="height:20px"></div>`;
   showPage('training-detail');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn,.snav-btn').forEach(b=>b.classList.remove('active'));
 }
 
-function editTraining(id) {
-  const t=trainings.find(x=>x.id===id); if(!t) return;
+function editTraining(id){
+  const t=trainings.find(x=>x.id===id);if(!t)return;
   editTrainingId=id;
-  document.getElementById('t-date').value=t.date||'';
-  document.getElementById('t-duration').value=t.duration||'';
-  document.getElementById('t-gym').value=t.gym||'';
-  document.getElementById('t-instructor').value=t.instructor||'';
-  document.getElementById('t-title').value=t.title||'';
-  document.getElementById('t-position').value=t.position||'';
-  document.getElementById('t-type').value=t.type||'';
-  document.getElementById('t-trigger').value=t.trigger||'';
+  ['date','duration','gym','instructor','partner','belt','title','position','situation','techtype','trigger','connections','tags','notes'].forEach(f=>{const el=document.getElementById('t-'+f);if(el)el.value=t[f]||'';});
   document.getElementById('t-d1').value=(t.details||[])[0]||'';
   document.getElementById('t-d2').value=(t.details||[])[1]||'';
   document.getElementById('t-d3').value=(t.details||[])[2]||'';
-  document.getElementById('t-connections').value=t.connections||'';
-  document.getElementById('t-notes').value=t.notes||'';
   tFormChecks={drilled:t.drilled||false,sparred:t.sparred||false,worked:t.worked||false};
-  tFormRating=t.rating||0; tFormIntensity=t.intensity||'';
-  updateTrainingCheckUI(); updateTStarsUI(); updateIntensityUI();
-  prevPage='training-detail'; showPage('training-form');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  tFormRating=t.rating||0;tFormIntensity=t.intensity||'';
+  updateTrainingCheckUI();updateTStarsUI();updateIntensityUI();
+  prevPage='training-detail';showPage('training-form');
+  document.querySelectorAll('.nav-btn,.snav-btn').forEach(b=>b.classList.remove('active'));
 }
-
-function deleteTraining(id) {
-  if(!confirm('Delete this training log?')) return;
-  trainings=trainings.filter(t=>t.id!==id); saveTrainings(); showToast('Deleted'); showPage('training');
-}
+function deleteTraining(id){if(!confirm('Delete this training log?'))return;trainings=trainings.filter(t=>t.id!==id);saveTrainings();showToast('Deleted');showPage('training');}
 
 // ─── SEARCH ────────────────────────────────────────────────────
-function openSearch() {
+function openSearch(){
   const bar=document.getElementById('search-bar');
-  bar.style.display = bar.style.display==='none' ? 'block' : 'none';
-  if(bar.style.display==='block') document.getElementById('search-input').focus();
+  bar.style.display=bar.style.display==='none'?'block':'none';
+  if(bar.style.display==='block')document.getElementById('search-input').focus();
   showPage('home');
 }
 
+// ─── EXPORT / IMPORT ───────────────────────────────────────────
+function openDataModal(){document.getElementById('modal-overlay').classList.add('open');}
+function closeDataModal(){document.getElementById('modal-overlay').classList.remove('open');}
+
+function exportData(){
+  const data={version:1,exported:new Date().toISOString(),notes,trainings};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='bjj-journal-backup-'+new Date().toISOString().substring(0,10)+'.json';
+  a.click();showToast('✓ Exported');closeDataModal();
+}
+
+function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(data.notes) notes=[...data.notes,...notes.filter(n=>!data.notes.find(x=>x.id===n.id))];
+      if(data.trainings) trainings=[...data.trainings,...trainings.filter(t=>!data.trainings.find(x=>x.id===t.id))];
+      saveNotes();saveTrainings();renderArchive();showToast('✓ Imported');closeDataModal();
+    }catch(err){alert('Invalid file. Please use a BJJ Journal backup JSON file.');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function clearData(){
+  if(!confirm('Delete ALL data? This cannot be undone.'))return;
+  if(!confirm('Are you sure? All videos and training logs will be deleted.'))return;
+  notes=[];trainings=[];saveNotes();saveTrainings();renderArchive();showToast('Data cleared');closeDataModal();
+}
+
 // ─── MAP ───────────────────────────────────────────────────────
-const BASE_POSITIONS = [
-  {id:'closed-guard',  label:'Closed\nGuard',    x:0.5,  y:0.5 },
-  {id:'de-la-riva',    label:'De la\nRiva',       x:0.25, y:0.35},
-  {id:'spider-guard',  label:'Spider\nGuard',     x:0.75, y:0.35},
-  {id:'x-guard',       label:'X-Guard',           x:0.15, y:0.6 },
-  {id:'half-guard',    label:'Half\nGuard',       x:0.5,  y:0.75},
-  {id:'side-control',  label:'Side\nControl',     x:0.82, y:0.6 },
-  {id:'mount',         label:'Mount',             x:0.7,  y:0.8 },
-  {id:'back-control',  label:'Back\nControl',     x:0.3,  y:0.8 },
-  {id:'standing',      label:'Standing',          x:0.5,  y:0.15},
-  {id:'leg-locks',     label:'Leg\nLocks',        x:0.15, y:0.85},
+const BASE_POSITIONS=[
+  {id:'closed-guard',  label:'Closed\nGuard',     x:0.5, y:0.5},
+  {id:'de-la-riva',    label:'De la\nRiva',        x:0.25,y:0.35},
+  {id:'spider-guard',  label:'Spider\nGuard',      x:0.75,y:0.35},
+  {id:'x-guard',       label:'X-Guard',            x:0.15,y:0.6},
+  {id:'half-guard',    label:'Half\nGuard',        x:0.5, y:0.75},
+  {id:'side-control',  label:'Side\nControl',      x:0.82,y:0.55},
+  {id:'north-south',   label:'North\nSouth',       x:0.88,y:0.35},
+  {id:'mount',         label:'Mount',              x:0.7, y:0.8},
+  {id:'back-control',  label:'Back\nControl',      x:0.3, y:0.8},
+  {id:'standing',      label:'Standing',           x:0.5, y:0.13},
+  {id:'leg-locks',     label:'Leg\nLocks',         x:0.15,y:0.85},
+  {id:'knee-on-belly', label:'Knee on\nBelly',     x:0.82,y:0.7},
 ];
-const BASE_CONNECTIONS = [
+const BASE_CONNECTIONS=[
   ['closed-guard','de-la-riva'],['closed-guard','spider-guard'],['closed-guard','half-guard'],
   ['de-la-riva','x-guard'],['de-la-riva','back-control'],['spider-guard','side-control'],
   ['half-guard','mount'],['half-guard','back-control'],['x-guard','leg-locks'],
   ['standing','closed-guard'],['standing','de-la-riva'],
+  ['side-control','north-south'],['side-control','knee-on-belly'],['side-control','mount'],
 ];
 
-let mapScale=1, mapOffX=0, mapOffY=0, mapDragging=false, mapLastX=0, mapLastY=0;
+let mapScale=1,mapOffX=0,mapOffY=0,mapDragging=false,mapLastX=0,mapLastY=0;
 
-function posKey(pos) { return (pos||'').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z-]/g,''); }
-function findBase(pos) {
-  const k=posKey(pos);
-  return BASE_POSITIONS.find(b=>b.id===k) ||
-    BASE_POSITIONS.find(b=>b.label.toLowerCase().replace('\n','').includes((pos||'').toLowerCase().substring(0,5)));
+function findBase(pos){
+  if(!pos)return null;
+  const k=pos.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z-]/g,'');
+  return BASE_POSITIONS.find(b=>b.id===k)||BASE_POSITIONS.find(b=>b.label.toLowerCase().replace('\n','').includes(pos.toLowerCase().substring(0,5)));
 }
 
-function setMapFilter(f) {
+function setMapFilter(f){
   mapFilter=f;
   document.querySelectorAll('.map-filter-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('mf-'+f).classList.add('active');
   drawMap();
 }
 
-function drawMap() {
+function drawMap(){
   const canvas=document.getElementById('map-canvas');
   const container=document.getElementById('page-map');
-  canvas.width=container.offsetWidth; canvas.height=container.offsetHeight;
-  const W=canvas.width, H=canvas.height;
+  canvas.width=container.offsetWidth;canvas.height=container.offsetHeight;
+  const W=canvas.width,H=canvas.height;
   const ctx=canvas.getContext('2d');
   ctx.clearRect(0,0,W,H);
 
-  // build nodes
-  const videoNodes=[], trainNodes=[];
-  if(mapFilter!=='training') {
-    notes.forEach(n => {
-      if(!n.position) return;
-      const base=findBase(n.position); if(!base) return;
-      const angle=(videoNodes.filter(x=>x.baseId===base.id).length*60)*Math.PI/180;
-      videoNodes.push({id:'v'+n.id,noteId:n.id,label:n.title.length>12?n.title.substring(0,11)+'…':n.title,fullLabel:n.title,position:n.position,x:base.x+Math.cos(angle)*0.09,y:base.y+Math.sin(angle)*0.09,baseId:base.id,kind:'video',rating:n.rating,connections:n.connections});
-    });
-  }
-  if(mapFilter!=='video') {
-    trainings.forEach(t => {
-      if(!t.position) return;
-      const base=findBase(t.position); if(!base) return;
-      const angle=(trainNodes.filter(x=>x.baseId===base.id).length*60+30)*Math.PI/180;
-      trainNodes.push({id:'t'+t.id,noteId:t.id,label:t.title.length>12?t.title.substring(0,11)+'…':t.title,fullLabel:t.title,position:t.position,x:base.x+Math.cos(angle)*0.11,y:base.y+Math.sin(angle)*0.11,baseId:base.id,kind:'training',rating:t.rating,connections:t.connections});
-    });
-  }
-  const allNodes=[...videoNodes,...trainNodes];
+  // light grid background
+  ctx.fillStyle='#f8f8f8';ctx.fillRect(0,0,W,H);
 
-  const total=notes.length+trainings.length;
-  if(total===0) { document.getElementById('map-empty').style.display='flex'; return; }
+  const vNodes=[],tNodes=[];
+  if(mapFilter!=='training'){notes.forEach(n=>{if(!n.position)return;const base=findBase(n.position);if(!base)return;const angle=(vNodes.filter(x=>x.baseId===base.id).length*60)*Math.PI/180;vNodes.push({id:'v'+n.id,noteId:n.id,label:n.title.length>12?n.title.substring(0,11)+'…':n.title,fullLabel:n.title,position:n.position,x:base.x+Math.cos(angle)*0.09,y:base.y+Math.sin(angle)*0.09,baseId:base.id,kind:'video',rating:n.rating,connections:n.connections});});}
+  if(mapFilter!=='video'){trainings.forEach(t=>{if(!t.position)return;const base=findBase(t.position);if(!base)return;const angle=(tNodes.filter(x=>x.baseId===base.id).length*60+30)*Math.PI/180;tNodes.push({id:'t'+t.id,noteId:t.id,label:t.title.length>12?t.title.substring(0,11)+'…':t.title,fullLabel:t.title,position:t.position,x:base.x+Math.cos(angle)*0.11,y:base.y+Math.sin(angle)*0.11,baseId:base.id,kind:'training',rating:t.rating,connections:t.connections});});}
+  const allNodes=[...vNodes,...tNodes];
+
+  if(notes.length+trainings.length===0){document.getElementById('map-empty').style.display='flex';return;}
   document.getElementById('map-empty').style.display='none';
 
-  const tr=(x,y)=>[x*W*mapScale+mapOffX, y*H*mapScale+mapOffY];
+  const tr=(x,y)=>[x*W*mapScale+mapOffX,y*H*mapScale+mapOffY];
 
-  // base connections
   BASE_CONNECTIONS.forEach(([a,b])=>{
-    const na=BASE_POSITIONS.find(x=>x.id===a), nb=BASE_POSITIONS.find(x=>x.id===b);
-    if(!na||!nb) return;
-    const [x1,y1]=tr(na.x,na.y),[x2,y2]=tr(nb.x,nb.y);
-    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
-    ctx.strokeStyle='#2a2a2a'; ctx.lineWidth=1.5; ctx.setLineDash([]); ctx.stroke();
+    const na=BASE_POSITIONS.find(x=>x.id===a),nb=BASE_POSITIONS.find(x=>x.id===b);if(!na||!nb)return;
+    const[x1,y1]=tr(na.x,na.y),[x2,y2]=tr(nb.x,nb.y);
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle='#ddd';ctx.lineWidth=1.5;ctx.setLineDash([]);ctx.stroke();
   });
 
-  // node to base lines
   allNodes.forEach(n=>{
-    const base=BASE_POSITIONS.find(b=>b.id===n.baseId); if(!base) return;
-    const [x1,y1]=tr(n.x,n.y),[x2,y2]=tr(base.x,base.y);
-    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
-    ctx.strokeStyle=n.kind==='video'?'rgba(200,169,110,0.2)':'rgba(58,90,124,0.3)';
-    ctx.lineWidth=1; ctx.setLineDash([3,4]); ctx.stroke(); ctx.setLineDash([]);
+    const base=BASE_POSITIONS.find(b=>b.id===n.baseId);if(!base)return;
+    const[x1,y1]=tr(n.x,n.y),[x2,y2]=tr(base.x,base.y);
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);
+    ctx.strokeStyle=n.kind==='video'?'rgba(184,150,46,0.25)':'rgba(44,95,138,0.25)';ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.stroke();ctx.setLineDash([]);
   });
 
-  // connection lines
   allNodes.forEach(n=>{
-    if(!n.connections) return;
+    if(!n.connections)return;
     n.connections.split(',').map(s=>s.trim().toLowerCase()).forEach(t=>{
       allNodes.forEach(m=>{
-        if(m.id!==n.id && m.fullLabel.toLowerCase().includes(t.substring(0,4))) {
-          const [x1,y1]=tr(n.x,n.y),[x2,y2]=tr(m.x,m.y);
-          ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
-          ctx.strokeStyle='#8a6a4a'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]); ctx.stroke(); ctx.setLineDash([]);
+        if(m.id!==n.id&&m.fullLabel.toLowerCase().includes(t.substring(0,4))){
+          const[x1,y1]=tr(n.x,n.y),[x2,y2]=tr(m.x,m.y);
+          ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle='#c8a030';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);
         }
       });
       BASE_POSITIONS.forEach(b=>{
-        if(b.label.toLowerCase().replace('\n','').includes(t.substring(0,4))) {
-          const [x1,y1]=tr(n.x,n.y),[x2,y2]=tr(b.x,b.y);
-          ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
-          ctx.strokeStyle='#5a6a9a'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]); ctx.stroke(); ctx.setLineDash([]);
+        if(b.label.toLowerCase().replace('\n','').includes(t.substring(0,4))){
+          const[x1,y1]=tr(n.x,n.y),[x2,y2]=tr(b.x,b.y);
+          ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle='#8ab0d0';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);
         }
       });
     });
   });
 
-  // base nodes
   BASE_POSITIONS.forEach(p=>{
-    const [cx,cy]=tr(p.x,p.y), r=Math.max(18,26*mapScale);
-    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle='#1a1a1a'; ctx.fill();
-    ctx.strokeStyle='#C8A96E'; ctx.lineWidth=1.5; ctx.stroke();
-    ctx.fillStyle='#C8A96E'; ctx.font=`${Math.max(7,9*mapScale)}px 'DM Mono',monospace`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    p.label.split('\n').forEach((line,i,arr)=>ctx.fillText(line,cx,cy+(i-(arr.length-1)/2)*Math.max(8,11*mapScale)));
+    const[cx,cy]=tr(p.x,p.y),r=Math.max(20,28*mapScale);
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle='#B8962E';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#8a7030';ctx.font=`bold ${Math.max(8,10*mapScale)}px 'DM Mono',monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
+    p.label.split('\n').forEach((line,i,arr)=>ctx.fillText(line,cx,cy+(i-(arr.length-1)/2)*Math.max(9,12*mapScale)));
   });
 
-  // video nodes
-  videoNodes.forEach(n=>{
-    const [cx,cy]=tr(n.x,n.y), r=Math.max(12,16*mapScale);
-    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle='#1f2e24'; ctx.fill();
-    ctx.strokeStyle='#4a7c59'; ctx.lineWidth=1.5; ctx.stroke();
-    if(n.rating>=4){ ctx.strokeStyle='#C8A96E'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cx,cy,r+3,0,Math.PI*2); ctx.stroke(); }
-    ctx.fillStyle='#a0d4b4'; ctx.font=`${Math.max(6,7*mapScale)}px 'DM Mono',monospace`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
+  vNodes.forEach(n=>{
+    const[cx,cy]=tr(n.x,n.y),r=Math.max(13,17*mapScale);
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#edf7f1';ctx.fill();ctx.strokeStyle='#2e7d52';ctx.lineWidth=1.5;ctx.stroke();
+    if(n.rating>=4){ctx.strokeStyle='#B8962E';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,r+3,0,Math.PI*2);ctx.stroke();}
+    ctx.fillStyle='#1a5c3a';ctx.font=`${Math.max(6,7*mapScale)}px 'DM Mono',monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
     n.label.split(' ').slice(0,2).forEach((w,i,arr)=>ctx.fillText(w,cx,cy+(i-(arr.length-1)/2)*Math.max(7,9*mapScale)));
   });
 
-  // training nodes
-  trainNodes.forEach(n=>{
-    const [cx,cy]=tr(n.x,n.y), r=Math.max(12,16*mapScale);
-    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fillStyle='#1a2030'; ctx.fill();
-    ctx.strokeStyle='#3a5a7c'; ctx.lineWidth=1.5; ctx.stroke();
-    if(n.rating>=4){ ctx.strokeStyle='#C8A96E'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cx,cy,r+3,0,Math.PI*2); ctx.stroke(); }
-    ctx.fillStyle='#7aaacc'; ctx.font=`${Math.max(6,7*mapScale)}px 'DM Mono',monospace`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
+  tNodes.forEach(n=>{
+    const[cx,cy]=tr(n.x,n.y),r=Math.max(13,17*mapScale);
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='#eaf0f7';ctx.fill();ctx.strokeStyle='#2c5f8a';ctx.lineWidth=1.5;ctx.stroke();
+    if(n.rating>=4){ctx.strokeStyle='#B8962E';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,r+3,0,Math.PI*2);ctx.stroke();}
+    ctx.fillStyle='#1a3d5c';ctx.font=`${Math.max(6,7*mapScale)}px 'DM Mono',monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
     n.label.split(' ').slice(0,2).forEach((w,i,arr)=>ctx.fillText(w,cx,cy+(i-(arr.length-1)/2)*Math.max(7,9*mapScale)));
   });
 }
 
-function zoomMap(f) { mapScale=Math.max(0.4,Math.min(3,mapScale*f)); drawMap(); }
-function resetMap() { mapScale=1; mapOffX=0; mapOffY=0; drawMap(); }
+function zoomMap(f){mapScale=Math.max(0.4,Math.min(3,mapScale*f));drawMap();}
+function resetMap(){mapScale=1;mapOffX=0;mapOffY=0;drawMap();}
 
 const mapPage=document.getElementById('page-map');
-mapPage.addEventListener('touchstart',e=>{ if(e.touches.length===1){ mapDragging=true; mapLastX=e.touches[0].clientX; mapLastY=e.touches[0].clientY; }},{passive:true});
-mapPage.addEventListener('touchmove',e=>{ if(!mapDragging||e.touches.length!==1) return; mapOffX+=e.touches[0].clientX-mapLastX; mapOffY+=e.touches[0].clientY-mapLastY; mapLastX=e.touches[0].clientX; mapLastY=e.touches[0].clientY; drawMap();},{passive:true});
-mapPage.addEventListener('touchend',()=>{ mapDragging=false; });
+mapPage.addEventListener('touchstart',e=>{if(e.touches.length===1){mapDragging=true;mapLastX=e.touches[0].clientX;mapLastY=e.touches[0].clientY;}},{passive:true});
+mapPage.addEventListener('touchmove',e=>{if(!mapDragging||e.touches.length!==1)return;mapOffX+=e.touches[0].clientX-mapLastX;mapOffY+=e.touches[0].clientY-mapLastY;mapLastX=e.touches[0].clientX;mapLastY=e.touches[0].clientY;drawMap();},{passive:true});
+mapPage.addEventListener('touchend',()=>{mapDragging=false;});
+mapPage.addEventListener('mousedown',e=>{mapDragging=true;mapLastX=e.clientX;mapLastY=e.clientY;});
+mapPage.addEventListener('mousemove',e=>{if(!mapDragging)return;mapOffX+=e.clientX-mapLastX;mapOffY+=e.clientY-mapLastY;mapLastX=e.clientX;mapLastY=e.clientY;drawMap();});
+mapPage.addEventListener('mouseup',()=>{mapDragging=false;});
 
 document.getElementById('map-canvas').addEventListener('click',e=>{
-  const canvas=document.getElementById('map-canvas'), rect=canvas.getBoundingClientRect();
-  const mx=e.clientX-rect.left, my=e.clientY-rect.top, W=canvas.width, H=canvas.height;
+  const canvas=document.getElementById('map-canvas'),rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top,W=canvas.width,H=canvas.height;
   const tr=(x,y)=>[x*W*mapScale+mapOffX,y*H*mapScale+mapOffY];
-  const tt=document.getElementById('map-tooltip'); let hit=false;
-
-  // rebuild nodes for hit test
+  const tt=document.getElementById('map-tooltip');let hit=false;
   const vn=[],tn=[];
-  notes.forEach(n=>{ if(!n.position) return; const base=findBase(n.position); if(!base) return; const angle=(vn.filter(x=>x.baseId===base.id).length*60)*Math.PI/180; vn.push({noteId:n.id,x:base.x+Math.cos(angle)*0.09,y:base.y+Math.sin(angle)*0.09,baseId:base.id,kind:'video'}); });
-  trainings.forEach(t=>{ if(!t.position) return; const base=findBase(t.position); if(!base) return; const angle=(tn.filter(x=>x.baseId===base.id).length*60+30)*Math.PI/180; tn.push({noteId:t.id,x:base.x+Math.cos(angle)*0.11,y:base.y+Math.sin(angle)*0.11,baseId:base.id,kind:'training'}); });
-
+  notes.forEach(n=>{if(!n.position)return;const base=findBase(n.position);if(!base)return;const angle=(vn.filter(x=>x.baseId===base.id).length*60)*Math.PI/180;vn.push({noteId:n.id,x:base.x+Math.cos(angle)*0.09,y:base.y+Math.sin(angle)*0.09,baseId:base.id,kind:'video'});});
+  trainings.forEach(t=>{if(!t.position)return;const base=findBase(t.position);if(!base)return;const angle=(tn.filter(x=>x.baseId===base.id).length*60+30)*Math.PI/180;tn.push({noteId:t.id,x:base.x+Math.cos(angle)*0.11,y:base.y+Math.sin(angle)*0.11,baseId:base.id,kind:'training'});});
   [...vn,...tn].forEach(n=>{
-    const [cx,cy]=tr(n.x,n.y);
+    const[cx,cy]=tr(n.x,n.y);
     if(Math.hypot(mx-cx,my-cy)<20){
-      const item = n.kind==='video' ? notes.find(x=>x.id===n.noteId) : trainings.find(x=>x.id===n.noteId);
-      if(!item) return;
-      const color=n.kind==='video'?'var(--gold)':'#7aaacc';
-      tt.innerHTML=`<strong style="color:${color}">${item.title}</strong><br><span style="color:var(--text-dim)">${[item.position,item.type].filter(Boolean).join(' · ')}</span>${item.connections?`<br><span style="color:#5a6a9a">→ ${item.connections}</span>`:''}`;
-      tt.style.display='block'; tt.style.left=Math.min(mx+10,W-190)+'px'; tt.style.top=Math.max(my-40,10)+'px'; hit=true;
+      const item=n.kind==='video'?notes.find(x=>x.id===n.noteId):trainings.find(x=>x.id===n.noteId);if(!item)return;
+      tt.innerHTML=`<strong style="color:${n.kind==='video'?'var(--gold)':'var(--blue)'}">${item.title}</strong><br><span style="color:var(--text-dim)">${[item.position,item.situation].filter(Boolean).join(' · ')}</span>${item.connections?`<br><span style="color:#8ab0d0">→ ${item.connections}</span>`:''}<br><span style="font-size:10px;color:var(--text-faint)">Tap to open</span>`;
+      tt.style.display='block';tt.style.left=Math.min(mx+10,W-210)+'px';tt.style.top=Math.max(my-40,10)+'px';hit=true;
+      // click to open detail
+      tt.onclick=()=>{tt.style.display='none';if(n.kind==='video')showDetail(n.noteId);else showTrainingDetail(n.noteId);};
     }
   });
   BASE_POSITIONS.forEach(p=>{
-    const [cx,cy]=tr(p.x,p.y);
-    if(Math.hypot(mx-cx,my-cy)<28){
+    const[cx,cy]=tr(p.x,p.y);
+    if(Math.hypot(mx-cx,my-cy)<30){
       const vc=notes.filter(n=>n.position&&findBase(n.position)&&findBase(n.position).id===p.id).length;
       const tc=trainings.filter(t=>t.position&&findBase(t.position)&&findBase(t.position).id===p.id).length;
       tt.innerHTML=`<strong style="color:var(--gold)">${p.label.replace('\n',' ')}</strong><br><span style="color:var(--text-dim)">${vc} videos · ${tc} trainings</span>`;
-      tt.style.display='block'; tt.style.left=Math.min(mx+10,W-190)+'px'; tt.style.top=Math.max(my-40,10)+'px'; hit=true;
+      tt.style.display='block';tt.style.left=Math.min(mx+10,W-210)+'px';tt.style.top=Math.max(my-40,10)+'px';hit=true;tt.onclick=null;
     }
   });
-  if(!hit) tt.style.display='none';
+  if(!hit)tt.style.display='none';
 });
 
 // ─── TOAST ─────────────────────────────────────────────────────
-function showToast(msg) {
-  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+// close modal on overlay click
+document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.target===document.getElementById('modal-overlay'))closeDataModal();});
 
 // ─── INIT ──────────────────────────────────────────────────────
 renderArchive();
